@@ -38,12 +38,10 @@ uifork init frontend/src/SomeDropdownComponent.tsx
 
 This will:
 
-- Create a new directory with the component name
-- Move the original file to `v1.tsx`
-- Generate a `versions.ts` file
-- Create a `UISwitcher.tsx` component
-- Create an `index.tsx` entry point
-- Add a README with instructions
+- Rename the original file to `ComponentName.v1.tsx` (or `.ts`)
+- Generate a `ComponentName.versions.ts` file
+- Create a `ComponentName.UISwitcher.tsx` component
+- Create a `ComponentName.tsx` wrapper file that exports the component
 
 ### Watch for Changes
 
@@ -55,30 +53,32 @@ uifork watch SomeDropdownComponent
 
 The watch command will:
 
-- Automatically find directories containing `versions.ts` files
-- Watch for new version files (v\*.tsx)
+- Automatically find files matching `*.versions.ts` pattern
+- Watch for new version files (ComponentName.v*.tsx or ComponentName.v*.ts)
 - Auto-update imports in `versions.ts`
 - Handle file renames bidirectionally
 
 ## Component Structure
 
-After running `uifork init`, your component directory will contain:
+After running `uifork init`, your component files will be created in the same directory:
 
 ```
-ComponentName/
-├── index.tsx          # Main export using UISwitcher
-├── UISwitcher.tsx     # Version switcher component
-├── versions.ts        # Version configuration
-├── v1.tsx            # Your original component (version 1)
-├── v2.tsx            # Additional versions as needed
-└── README.md         # Component-specific documentation
+src/components/
+├── ComponentName.tsx              # Main wrapper export (use this for imports)
+├── ComponentName.UISwitcher.tsx   # Version switcher component
+├── ComponentName.versions.ts      # Version configuration
+├── ComponentName.v1.tsx           # Your original component (version 1)
+├── ComponentName.v2.tsx           # Additional versions as needed
+└── ComponentName.v1_1.tsx        # Sub-versions (e.g., v1_1, v2_1)
 ```
+
+All files are created in the same directory as your original component, using a flat naming convention.
 
 ## Adding New Versions
 
-1. Create new version files: `v2.tsx`, `v1_1.tsx`, etc.
-2. Run `uifork watch ComponentName` to automatically update `versions.ts`
-3. Or manually add imports and version entries to `versions.ts`
+1. Create new version files: `ComponentName.v2.tsx`, `ComponentName.v1_1.tsx`, etc.
+2. Run `uifork watch ComponentName.versions.ts` (or just `uifork watch ComponentName`) to automatically update `versions.ts`
+3. Or manually add imports and version entries to `ComponentName.versions.ts`
 
 ## UI Switcher Controls
 
@@ -98,10 +98,13 @@ ComponentName/
 ```bash
 # Initialize a new UI switcher
 uifork init src/components/Button.tsx
+# Creates: Button.tsx, Button.v1.tsx, Button.versions.ts, Button.UISwitcher.tsx
 
-# Watch for changes (by component name)
+# Watch for changes (by component name or path)
 uifork watch Button
+# or
+uifork watch src/components/Button.versions.ts
 
-# Watch for changes (by path)
-uifork watch src/components/Button
+# Import and use the component
+import Button from './Button'  # Uses Button.tsx wrapper
 ```
