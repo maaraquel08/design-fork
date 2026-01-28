@@ -2,6 +2,7 @@
 
 const { UISwitcherScaffold } = require("./lib/init");
 const { VersionSync } = require("./lib/watch");
+const { VersionPromoter } = require("./lib/promote");
 
 function showHelp() {
   console.log(`
@@ -10,14 +11,17 @@ uifork - A CLI tool for managing UI component versions
 Usage:
   uifork init <component-path>    Initialize a new UI switcher from a component file
   uifork watch <component-name>   Watch a component directory for version changes
+  uifork promote <component-path> <version-id>  Promote a version to be the main component
 
 Examples:
   uifork init frontend/src/SomeDropdownComponent.tsx
   uifork watch SomeDropdownComponent
+  uifork promote SomeDropdownComponent v2
 
 Commands:
   init     Convert a single component file into a versioned UI switcher
   watch    Watch for changes in version files and automatically update versions.ts
+  promote  Promote a version to be the main component and remove versioning scaffolding
 
 Options:
   -h, --help     Show this help message
@@ -53,7 +57,7 @@ switch (command) {
       console.error("Error: Component path is required for init command");
       console.error("Usage: uifork init <component-path>");
       console.error(
-        "Example: uifork init frontend/src/modules/chart-builder/ZoomDatePickerDropdown.tsx"
+        "Example: uifork init frontend/src/modules/chart-builder/ZoomDatePickerDropdown.tsx",
       );
       process.exit(1);
     }
@@ -70,7 +74,7 @@ switch (command) {
   case "watch":
     if (!argument) {
       console.error(
-        "Error: Component name or path is required for watch command"
+        "Error: Component name or path is required for watch command",
       );
       console.error("Usage: uifork watch <component-name-or-path>");
       console.error("Example: uifork watch ZoomDatePickerDropdown");
@@ -81,6 +85,39 @@ switch (command) {
       new VersionSync(argument);
     } catch (error) {
       console.error(`Error during watching: ${error.message}`);
+      process.exit(1);
+    }
+    break;
+
+  case "promote":
+    if (!argument) {
+      console.error(
+        "Error: Component path and version ID are required for promote command",
+      );
+      console.error("Usage: uifork promote <component-path> <version-id>");
+      console.error("Example: uifork promote SomeDropdownComponent v2");
+      console.error(
+        "Example: uifork promote frontend/src/SomeDropdownComponent.tsx v1_2",
+      );
+      process.exit(1);
+    }
+
+    const versionId = args[2];
+    if (!versionId) {
+      console.error("Error: Version ID is required for promote command");
+      console.error("Usage: uifork promote <component-path> <version-id>");
+      console.error("Example: uifork promote SomeDropdownComponent v2");
+      console.error(
+        "Example: uifork promote frontend/src/SomeDropdownComponent.tsx v1_2",
+      );
+      process.exit(1);
+    }
+
+    try {
+      const promoter = new VersionPromoter(argument, versionId);
+      promoter.promote();
+    } catch (error) {
+      console.error(`Error during promotion: ${error.message}`);
       process.exit(1);
     }
     break;

@@ -58,6 +58,22 @@ The watch command will:
 - Auto-update imports in `versions.ts`
 - Handle file renames bidirectionally
 
+### Promote a Version
+
+Promote a specific version to be the main component and remove all versioning scaffolding:
+
+```bash
+uifork promote SomeDropdownComponent v2
+```
+
+This will:
+
+- Replace `ComponentName.tsx` with the content from `ComponentName.v2.tsx`
+- Delete all version files (`ComponentName.v*.tsx`)
+- Delete `ComponentName.versions.ts`
+- Delete `ComponentName.UISwitcher.tsx`
+- Effectively "undo" the versioning system, leaving just the promoted version as the main component
+
 ## Component Structure
 
 After running `uifork init`, your component files will be created in the same directory:
@@ -90,6 +106,7 @@ All files are created in the same directory as your original component, using a 
 
 - `uifork init <component-path>` - Initialize a UI switcher from a component file
 - `uifork watch <component-name>` - Watch for version changes in a component
+- `uifork promote <component-path> <version-id>` - Promote a version to be the main component and remove versioning scaffolding
 - `uifork --help` - Show help information
 - `uifork --version` - Show version number
 
@@ -104,6 +121,10 @@ uifork init src/components/Button.tsx
 uifork watch Button
 # or
 uifork watch src/components/Button.versions.ts
+
+# Promote a version to be the main component (removes all versioning)
+uifork promote Button v2
+# This replaces Button.tsx with Button.v2.tsx and deletes all version files
 
 # Import and use the component
 import Button from './Button'  # Uses Button.tsx wrapper
