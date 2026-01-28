@@ -6,7 +6,7 @@ import {
   shift,
 } from "@floating-ui/dom";
 import { useLocalStorage } from "hooks/useLocalStorage";
-import { type ReactNode, useEffect, useRef, useState } from "react";
+import React, { type ReactNode, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 type VersionType<T extends Record<string, unknown>> = {
@@ -44,12 +44,101 @@ export const UISwitcher = <T extends Record<string, unknown>>({
   const triggerRef = useRef<HTMLButtonElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [wsConnection, setWsConnection] = useState<WebSocket | null>(null);
+  const [connectionStatus, setConnectionStatus] = useState<
+    "connected" | "disconnected" | "connecting"
+  >("disconnected");
 
   useEffect(() => {
     if (!versionKeys.includes(activeVersion)) {
       setActiveVersion(versionKeys[0]);
     }
   }, [activeVersion, versionKeys, setActiveVersion]);
+
+  // WebSocket connection management
+  useEffect(() => {
+    // Port can be configured via window.__UIFORK_PORT__ or defaults to 3001
+    const port =
+      (typeof window !== "undefined" &&
+        (window as { __UIFORK_PORT__?: string }).__UIFORK_PORT__) ||
+      "3001";
+    const wsUrl = `ws://localhost:${port}/ws`;
+
+    setConnectionStatus("connecting");
+    const ws = new WebSocket(wsUrl);
+
+    ws.onopen = () => {
+      setConnectionStatus("connected");
+      setWsConnection(ws);
+    };
+
+    ws.onclose = () => {
+      setConnectionStatus("disconnected");
+      setWsConnection(null);
+    };
+
+    ws.onerror = (error) => {
+      console.error("[UISwitcher] WebSocket error:", error);
+      setConnectionStatus("disconnected");
+    };
+
+    ws.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        // Handle server messages (ack, error, file_changed)
+        if (data.type === "file_changed") {
+          // File system changed, could trigger a refresh if needed
+          console.log("[UISwitcher] File changed:", data.payload);
+        }
+      } catch (error) {
+        console.error("[UISwitcher] Error parsing WebSocket message:", error);
+      }
+    };
+
+    return () => {
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.close();
+      }
+    };
+  }, []);
+
+  // Send WebSocket message helper
+  const sendWebSocketMessage = (
+    type:
+      | "duplicate_version"
+      | "delete_version"
+      | "new_version"
+      | "rename_version",
+    payload: Record<string, unknown>,
+  ) => {
+    if (wsConnection && wsConnection.readyState === WebSocket.OPEN) {
+      wsConnection.send(JSON.stringify({ type, payload }));
+    } else {
+      console.warn("[UISwitcher] WebSocket not connected, cannot send message");
+    }
+  };
+
+  // Action handlers
+  const handleDuplicateVersion = (version: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    sendWebSocketMessage("duplicate_version", { version });
+  };
+
+  const handleDeleteVersion = (version: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    sendWebSocketMessage("delete_version", { version });
+  };
+
+  const handleRenameVersion = (version: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    // For now, just log - rename will need a dialog/prompt
+    sendWebSocketMessage("rename_version", { version, newVersion: "" });
+  };
+
+  const handleNewVersion = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    sendWebSocketMessage("new_version", {});
+  };
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -222,6 +311,23 @@ export const UISwitcher = <T extends Record<string, unknown>>({
               aria-haspopup="listbox"
               className="fixed bottom-5 right-5 z-[1000] flex items-center gap-2 rounded-lg bg-neutral-800 px-3 py-2 text-sm text-white shadow-lg transition-colors hover:bg-neutral-700 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-2 focus:ring-offset-neutral-900"
             >
+              {/* Connection status indicator */}
+              <div
+                className={`h-2 w-2 rounded-full ${
+                  connectionStatus === "connected"
+                    ? "bg-green-500"
+                    : connectionStatus === "connecting"
+                      ? "bg-yellow-500"
+                      : "bg-red-500"
+                }`}
+                title={
+                  connectionStatus === "connected"
+                    ? "Connected to watch server"
+                    : connectionStatus === "connecting"
+                      ? "Connecting..."
+                      : "Disconnected from watch server"
+                }
+              />
               <span>{activeVersionLabel}</span>
               <svg
                 className={`h-4 w-4 transition-transform ${
@@ -267,9 +373,9 @@ export const UISwitcher = <T extends Record<string, unknown>>({
                         setIsOpen(false);
                         triggerRef.current?.focus();
                       }}
-                      className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm text-white transition-colors hover:bg-neutral-700 focus:bg-neutral-700 focus:outline-none"
+                      className="group flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm text-white transition-colors hover:bg-neutral-700 focus:bg-neutral-700 focus:outline-none"
                     >
-                      <div className="flex flex-col">
+                      <div className="flex flex-col flex-1 min-w-0">
                         <div>{versions[key].label}</div>
                         {versions[key].description && (
                           <div className="text-xs text-neutral-400">
@@ -277,25 +383,131 @@ export const UISwitcher = <T extends Record<string, unknown>>({
                           </div>
                         )}
                       </div>
-                      {isSelected && (
-                        <svg
-                          className="h-4 w-4 flex-shrink-0"
-                          fill="none"
-                          viewBox="0 0 16 16"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M13.333 4L6 11.333 2.667 8"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      )}
+                      <div className="flex items-center gap-1">
+                        {isSelected && (
+                          <svg
+                            className="h-4 w-4 flex-shrink-0"
+                            fill="none"
+                            viewBox="0 0 16 16"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M13.333 4L6 11.333 2.667 8"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        )}
+                        {/* Action buttons */}
+                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          {/* Rename button */}
+                          <button
+                            onClick={(e) => handleRenameVersion(key, e)}
+                            className="p-1 rounded hover:bg-neutral-600 transition-colors"
+                            title="Rename version"
+                            aria-label={`Rename ${key}`}
+                          >
+                            <svg
+                              className="h-3.5 w-3.5"
+                              fill="none"
+                              viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M11.333 2.667a1.414 1.414 0 0 1 2 2L6 12l-2.667.667L4 10.667l7.333-7.333z"
+                                stroke="currentColor"
+                                strokeWidth="1.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                          </button>
+                          {/* Duplicate button */}
+                          <button
+                            onClick={(e) => handleDuplicateVersion(key, e)}
+                            className="p-1 rounded hover:bg-neutral-600 transition-colors"
+                            title="Duplicate version"
+                            aria-label={`Duplicate ${key}`}
+                          >
+                            <svg
+                              className="h-3.5 w-3.5"
+                              fill="none"
+                              viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <rect
+                                x="5.333"
+                                y="5.333"
+                                width="8"
+                                height="8"
+                                rx="1"
+                                stroke="currentColor"
+                                strokeWidth="1.5"
+                              />
+                              <path
+                                d="M10.667 2.667H2.667a1 1 0 0 0-1 1v8"
+                                stroke="currentColor"
+                                strokeWidth="1.5"
+                                strokeLinecap="round"
+                              />
+                            </svg>
+                          </button>
+                          {/* Delete button */}
+                          <button
+                            onClick={(e) => handleDeleteVersion(key, e)}
+                            className="p-1 rounded hover:bg-red-600 transition-colors"
+                            title="Delete version"
+                            aria-label={`Delete ${key}`}
+                          >
+                            <svg
+                              className="h-3.5 w-3.5"
+                              fill="none"
+                              viewBox="0 0 16 16"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M2 4h12M5.333 4V2.667a1.333 1.333 0 0 1 1.334-1.334h2.666a1.333 1.333 0 0 1 1.334 1.334V4m2 0v9.333a1.333 1.333 0 0 1-1.334 1.334H4.667a1.333 1.333 0 0 1-1.334-1.334V4h10.667z"
+                                stroke="currentColor"
+                                strokeWidth="1.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
                     </button>
                   );
                 })}
+                {/* Divider */}
+                <div className="border-t border-neutral-700 my-1" />
+                {/* New version button */}
+                <button
+                  onClick={(e) => {
+                    handleNewVersion(e);
+                    setIsOpen(false);
+                    triggerRef.current?.focus();
+                  }}
+                  className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-white transition-colors hover:bg-neutral-700 focus:bg-neutral-700 focus:outline-none"
+                  title="Create new version"
+                >
+                  <svg
+                    className="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 16 16"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M8 3v10M3 8h10"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  <span>New version</span>
+                </button>
               </div>
             )}
           </>,
