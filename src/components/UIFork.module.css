@@ -15,9 +15,13 @@
   color: white;
   cursor: pointer;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transition: transform 0.15s ease-out;
 }
 .trigger:hover {
   background-color: #303030;
+}
+.trigger:active {
+  transform: scale(0.99);
 }
 
 /* Connection status indicator */
@@ -64,8 +68,25 @@
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   border: 1px solid #404040;
   padding: 4px;
+  animation: fadeUpBlur 0.3s cubic-bezier(0.45, 0.56, 0, 1) forwards;
+  opacity: 0;
+  transform: translateY(8px) scale(0.97);
+  filter: blur(4px);
+  transform-origin: bottom right;
 }
 
+@keyframes fadeUpBlur {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
 /* Component selector button */
 .componentSelector {
   display: flex;

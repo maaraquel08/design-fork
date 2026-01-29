@@ -683,20 +683,6 @@ export function UIFork({ port = 3001 }: UIForkProps) {
         <span>{selectedComponent || "No component"}</span>
         <span className={styles.triggerSeparator}>/</span>
         <span>{activeVersion ? formatVersionLabel(activeVersion) : "-"}</span>
-        <svg
-          className={`${styles.triggerIcon} ${isOpen ? styles.triggerIconOpen : ""}`}
-          fill="none"
-          viewBox="0 0 16 16"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M4 6l4 4 4-4"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
       </button>
 
       {/* Dropdown menu */}
