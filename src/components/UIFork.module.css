@@ -70,7 +70,7 @@
 .triggerIcon {
   width: 16px;
   height: 16px;
-  transition: transform 0.2s cubic-bezier(.04,1.02,.13,1.02);
+  transition: transform 0.2s;
 }
 .triggerIcon.triggerIconOpen {
   transform: rotate(180deg);
@@ -86,22 +86,24 @@
 
 /* Component selector button */
 .componentSelector {
-  display: flex;
-  width: 100%;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
   padding: 8px 12px;
   font-size: 14px;
   color: white;
   background-color: transparent;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
-  text-align: left;
 }
 .componentSelector:hover {
   background-color: #303030;
+}
+.componentSelector {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  text-align: left;
 }
 
 .componentSelectorLabel {
@@ -123,24 +125,10 @@
 .versionsList {
   display: flex;
   flex-direction: column;
-  max-height: 500px;
+  max-height: 300px;
   overflow-y: auto;
   gap: 2px;
-  opacity: 0;
-  transform: scale(0.95);
-  animation: versionsListEnter 0.3s cubic-bezier(.04,1.02,.13,1.02) forwards;
   /* Custom scrollbar */
-}
-
-@keyframes versionsListEnter {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
 }
 .versionsList::-webkit-scrollbar {
   width: 4px;
@@ -162,18 +150,21 @@
 
 /* Version item */
 .versionItem {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 4px 4px 4px 8px;
+  padding: 8px 12px;
   font-size: 14px;
   color: white;
   background-color: transparent;
-  border-radius: 4px;
+  border: none;
+  border-radius: 8px;
   cursor: pointer;
 }
 .versionItem:hover {
   background-color: #303030;
+}
+.versionItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 .versionItem:hover .actions {
   opacity: 1;
@@ -223,22 +214,18 @@
 .actions {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 4px;
   opacity: 0;
-  transition: opacity 0.15s cubic-bezier(.04,1.02,.13,1.02);
+  transition: opacity 0.15s;
 }
 
 .actionButton {
-  padding: 8px;
+  padding: 4px;
   border-radius: 4px;
   background-color: transparent;
   border: none;
   cursor: pointer;
   color: white;
-  transition: background-color 0.2s cubic-bezier(.04,1.02,.13,1.02);
-}
-.actionButton:hover {
-  background-color: #3d3d3d;
 }
 
 .actionIcon {
@@ -260,72 +247,6 @@
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   border: 1px solid #404040;
   padding: 4px;
-  transform-origin: top right;
-  opacity: 0;
-  transform: scale(0.95);
-}
-
-.popoverVisible {
-  animation: popoverEnter 0.3s cubic-bezier(.04,1.02,.13,1.02) forwards;
-}
-
-@keyframes popoverEnter {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.popoverExiting {
-  animation: popoverExit 0.3s cubic-bezier(.04,1.02,.13,1.02) forwards;
-}
-
-@keyframes popoverExit {
-  from {
-    opacity: 1;
-    transform: scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-}
-
-/* Tooltip */
-.tooltip {
-  position: fixed;
-  z-index: 1003;
-  padding: 2px 6px;
-  font-size: 12px;
-  color: white;
-  background-color: #171717;
-  border: 1px solid #404040;
-  border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  pointer-events: none;
-  white-space: nowrap;
-  opacity: 0;
-  transform: scale(0.95);
-  transform-origin: center;
-}
-
-.tooltipVisible {
-  animation: tooltipEnter 0.2s cubic-bezier(.04,1.02,.13,1.02) forwards;
-}
-
-@keyframes tooltipEnter {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
 }
 
 /* Popover menu item */
@@ -378,21 +299,23 @@
 
 /* New version button */
 .newVersionButton {
-  display: flex;
-  width: 100%;
-  align-items: center;
-  gap: 8px;
   padding: 8px 12px;
   font-size: 14px;
   color: white;
   background-color: transparent;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
-  text-align: left;
 }
 .newVersionButton:hover {
   background-color: #303030;
+}
+.newVersionButton {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 8px;
+  text-align: left;
 }
 
 .newVersionIconContainer {
@@ -419,21 +342,6 @@
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   border: 1px solid #404040;
   padding: 4px;
-  transform-origin: top right;
-  opacity: 0;
-  transform: scale(0.95);
-  animation: componentSelectorDropdownEnter 0.3s cubic-bezier(.04,1.02,.13,1.02) forwards;
-}
-
-@keyframes componentSelectorDropdownEnter {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
 }
 
 /* Component selector item */
@@ -473,11 +381,4 @@
   margin-left: auto;
   color: #a3a3a3;
   font-size: 12px;
-}
-
-.componentSelectorDropdownTitle {
-  font-size: 12px;
-  color: #a3a3a3;
-  margin-bottom: 4px;
-  padding-left: 2px;
 }

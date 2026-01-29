@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from "motion/react";
 import type { UIForkProps } from "../types";
 import styles from "./UIFork.module.css";
 import { PlusIcon } from "./icons/PlusIcon";
+import { BranchIcon } from "./icons/BranchIcon";
 import {
   ComponentSelector,
   ComponentSelectorDropdown,
@@ -376,6 +377,7 @@ export function UIFork({ port = 3001 }: UIForkProps) {
                       : "Disconnected from watch server"
                 }
               />
+              <BranchIcon className={styles.triggerIcon} />
               <motion.span
                 layoutId="component-name"
                 layout="position"

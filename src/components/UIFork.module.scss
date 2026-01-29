@@ -36,6 +36,21 @@ $z-trigger: 1000;
 $z-dropdown: 1001;
 $z-popover: 1002;
 
+// Base menu item mixin
+@mixin menuItemBase {
+  padding: $spacing-sm $spacing-md;
+  font-size: 14px;
+  color: $text-primary;
+  background-color: transparent;
+  border: none;
+  border-radius: $radius-md;
+  cursor: pointer;
+
+  &:hover {
+    background-color: $bg-hover;
+  }
+}
+
 /* Container */
 .container {
   position: fixed;
@@ -126,23 +141,13 @@ $z-popover: 1002;
 
 /* Component selector button */
 .componentSelector {
+  @include menuItemBase;
   display: flex;
   width: 100%;
   align-items: center;
   justify-content: space-between;
   gap: $spacing-sm;
-  padding: $spacing-sm $spacing-md;
-  font-size: 14px;
-  color: $text-primary;
-  background-color: transparent;
-  border: none;
-  border-radius: $radius-sm;
-  cursor: pointer;
   text-align: left;
-
-  &:hover {
-    background-color: $bg-hover;
-  }
 }
 
 .componentSelectorLabel {
@@ -192,19 +197,12 @@ $z-popover: 1002;
 
 /* Version item */
 .versionItem {
+  @include menuItemBase;
   display: flex;
   align-items: center;
   gap: $spacing-sm;
-  padding: $spacing-sm $spacing-md;
-  font-size: 14px;
-  color: $text-primary;
-  background-color: transparent;
-  border-radius: $radius-sm;
-  cursor: pointer;
 
   &:hover {
-    background-color: $bg-hover;
-
     .actions {
       opacity: 1;
     }
@@ -342,22 +340,12 @@ $z-popover: 1002;
 
 /* New version button */
 .newVersionButton {
+  @include menuItemBase;
   display: flex;
   width: 100%;
   align-items: center;
   gap: $spacing-sm;
-  padding: $spacing-sm $spacing-md;
-  font-size: 14px;
-  color: $text-primary;
-  background-color: transparent;
-  border: none;
-  border-radius: $radius-sm;
-  cursor: pointer;
   text-align: left;
-
-  &:hover {
-    background-color: $bg-hover;
-  }
 }
 
 .newVersionIconContainer {
