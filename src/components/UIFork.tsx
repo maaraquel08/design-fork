@@ -478,7 +478,7 @@ export function UIFork({ port = 3001 }: UIForkProps) {
     const updatePosition = async () => {
       try {
         const { x, y } = await computePosition(
-          trigger,
+          containerRef.current!,
           componentSelectorRef.current!,
           {
             placement: "left-start",
@@ -497,7 +497,7 @@ export function UIFork({ port = 3001 }: UIForkProps) {
       componentSelectorRef.current.style.visibility = "hidden";
     updatePosition();
     const cleanup = autoUpdate(
-      trigger,
+      containerRef.current,
       componentSelectorRef.current,
       updatePosition,
     );
