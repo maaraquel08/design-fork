@@ -13,7 +13,7 @@ interface VersionsListProps {
   popoverPositions: Map<string, { x: number; y: number }>;
   onSelectVersion: (version: string) => void;
   onDuplicateVersion: (version: string, e: React.MouseEvent) => void;
-  onTogglePopover: (version: string, e: React.MouseEvent) => void;
+  onTogglePopover: (version: string, e?: React.MouseEvent) => void;
   onPromoteVersion: (version: string, e: React.MouseEvent) => void;
   onOpenInEditor: (version: string, e: React.MouseEvent) => void;
   onDeleteVersion: (version: string, e: React.MouseEvent) => void;

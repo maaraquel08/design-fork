@@ -32,7 +32,7 @@ import {
 const ANIMATION_DURATION = 0.3;
 
 // Animation easing curve (cubic-bezier)
-const ANIMATION_EASING = [0.18, 0.83, 0, 1] as const;
+const ANIMATION_EASING = [0.04, 1.02, 0.13, 1.02] as const;
 
 /**
  * UIFork - A floating UI component that renders a version picker in the bottom right.
@@ -290,8 +290,8 @@ export function UIFork({ port = 3001 }: UIForkProps) {
     }
   };
 
-  const handleTogglePopover = (version: string, e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleTogglePopover = (version: string, e?: React.MouseEvent) => {
+    e?.stopPropagation();
     setOpenPopoverVersion(openPopoverVersion === version ? null : version);
   };
 

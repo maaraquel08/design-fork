@@ -70,7 +70,7 @@
 .triggerIcon {
   width: 16px;
   height: 16px;
-  transition: transform 0.2s;
+  transition: transform 0.2s cubic-bezier(.04,1.02,.13,1.02);
 }
 .triggerIcon.triggerIconOpen {
   transform: rotate(180deg);
@@ -128,7 +128,7 @@
   gap: 2px;
   opacity: 0;
   transform: scale(0.95);
-  animation: versionsListEnter 0.3s cubic-bezier(0.18, 0.83, 0, 1) forwards;
+  animation: versionsListEnter 0.3s cubic-bezier(.04,1.02,.13,1.02) forwards;
   /* Custom scrollbar */
 }
 
@@ -225,7 +225,7 @@
   align-items: center;
   gap: 2px;
   opacity: 0;
-  transition: opacity 0.15s;
+  transition: opacity 0.15s cubic-bezier(.04,1.02,.13,1.02);
 }
 
 .actionButton {
@@ -235,7 +235,7 @@
   border: none;
   cursor: pointer;
   color: white;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s cubic-bezier(.04,1.02,.13,1.02);
 }
 .actionButton:hover {
   background-color: #3d3d3d;
@@ -266,7 +266,7 @@
 }
 
 .popoverVisible {
-  animation: popoverEnter 0.3s cubic-bezier(0.18, 0.83, 0, 1) forwards;
+  animation: popoverEnter 0.3s cubic-bezier(.04,1.02,.13,1.02) forwards;
 }
 
 @keyframes popoverEnter {
@@ -281,7 +281,7 @@
 }
 
 .popoverExiting {
-  animation: popoverExit 0.3s cubic-bezier(0.18, 0.83, 0, 1) forwards;
+  animation: popoverExit 0.3s cubic-bezier(.04,1.02,.13,1.02) forwards;
 }
 
 @keyframes popoverExit {
@@ -314,7 +314,7 @@
 }
 
 .tooltipVisible {
-  animation: tooltipEnter 0.2s cubic-bezier(0.18, 0.83, 0, 1) forwards;
+  animation: tooltipEnter 0.2s cubic-bezier(.04,1.02,.13,1.02) forwards;
 }
 
 @keyframes tooltipEnter {
@@ -422,7 +422,7 @@
   transform-origin: top right;
   opacity: 0;
   transform: scale(0.95);
-  animation: componentSelectorDropdownEnter 0.3s cubic-bezier(0.18, 0.83, 0, 1) forwards;
+  animation: componentSelectorDropdownEnter 0.3s cubic-bezier(.04,1.02,.13,1.02) forwards;
 }
 
 @keyframes componentSelectorDropdownEnter {

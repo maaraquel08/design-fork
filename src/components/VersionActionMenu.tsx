@@ -35,6 +35,7 @@ export function VersionActionMenu({
     <div
       ref={setDropdownRef}
       className={styles.popover}
+      data-popover-dropdown
       style={{
         visibility: "hidden",
       }}

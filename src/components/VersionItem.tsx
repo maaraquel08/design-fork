@@ -14,7 +14,7 @@ interface VersionItemProps {
   isPopoverOpen: boolean;
   onSelect: (version: string) => void;
   onDuplicate: (version: string, e: React.MouseEvent) => void;
-  onTogglePopover: (version: string, e: React.MouseEvent) => void;
+  onTogglePopover: (version: string, e?: React.MouseEvent) => void;
   onPromote: (version: string, e: React.MouseEvent) => void;
   onOpenInEditor: (version: string, e: React.MouseEvent) => void;
   onDelete: (version: string, e: React.MouseEvent) => void;
@@ -91,7 +91,7 @@ export function VersionItem({
               onOpenInEditor={onOpenInEditor}
               onDelete={onDelete}
               onRename={onRename}
-              onClose={() => onTogglePopover(version, {} as React.MouseEvent)}
+              onClose={() => onTogglePopover(version)}
               setDropdownRef={(el) => setPopoverDropdownRef(version, el)}
             />
           )}
