@@ -66,6 +66,9 @@ export function ComponentSelectorDropdown({
         visibility: "hidden",
       }}
     >
+      <div className={styles.componentSelectorDropdownTitle}>
+        Branched components
+      </div>
       {mountedComponents.length === 0 ? (
         <div className={styles.emptyState}>No mounted components found</div>
       ) : (

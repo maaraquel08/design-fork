@@ -52,9 +52,16 @@ export function VersionItem({
       </div>
       <div className={styles.versionLabel}>{formatVersionLabel(version)}</div>
       {/* Action buttons */}
-      <div data-actions className={styles.actions}>
+      <div
+        data-actions
+        className={styles.actions}
+        onClick={(e) => e.stopPropagation()}
+      >
         <button
-          onClick={(e) => onDuplicate(version, e)}
+          onClick={(e) => {
+            e.stopPropagation();
+            onDuplicate(version, e);
+          }}
           className={styles.actionButton}
           title="Clone version"
         >
@@ -63,17 +70,20 @@ export function VersionItem({
         <div className={styles.actionButtonMore}>
           <button
             ref={(el) => setPopoverTriggerRef(version, el)}
-            onClick={(e) => onTogglePopover(version, e)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onTogglePopover(version, e);
+            }}
             className={styles.actionButton}
             title="More options"
           >
             <MoreOptionsIcon className={styles.actionIcon} />
           </button>
           {/* Popover menu */}
-          {isPopoverOpen && popoverPosition && (
+          {isPopoverOpen && (
             <VersionActionMenu
               version={version}
-              position={popoverPosition}
+              position={popoverPosition || { x: 0, y: 0 }}
               onPromote={onPromote}
               onOpenInEditor={onOpenInEditor}
               onDelete={onDelete}

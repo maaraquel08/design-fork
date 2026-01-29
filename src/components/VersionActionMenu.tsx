@@ -26,13 +26,14 @@ export function VersionActionMenu({
   onClose,
   setDropdownRef,
 }: VersionActionMenuProps) {
+  // Don't set position via props - the positioning effect handles it directly
+  // This prevents the popover from flashing at (0, 0) on initial render
+  // The CSS animation will handle the fade-in and scale effect
   return (
     <div
       ref={setDropdownRef}
       className={styles.popover}
       style={{
-        left: `${position.x}px`,
-        top: `${position.y}px`,
         visibility: "hidden",
       }}
       role="menu"

@@ -539,7 +539,11 @@ export function UIFork({ port = 3001 }: UIForkProps) {
           });
           if (!cancelled) {
             popoverPositions.current.set(openPopoverVersion, { x, y });
+            dropdown.style.left = `${x}px`;
+            dropdown.style.top = `${y}px`;
             dropdown.style.visibility = "visible";
+            // Add class to trigger CSS animation
+            dropdown.classList.add(styles.popoverVisible);
           }
         } catch (error) {
           console.error("Error positioning popover:", error);
@@ -558,6 +562,11 @@ export function UIFork({ port = 3001 }: UIForkProps) {
       cancelled = true;
       cancelAnimationFrame(frameId);
       if (cleanup) cleanup();
+      // Remove animation class when popover closes
+      const dropdown = popoverDropdownRefs.current.get(openPopoverVersion);
+      if (dropdown) {
+        dropdown.classList.remove(styles.popoverVisible);
+      }
     };
   }, [openPopoverVersion]);
 
