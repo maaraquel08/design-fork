@@ -12,6 +12,7 @@ import { createPortal } from "react-dom";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { getMountedComponents, subscribe } from "../utils/componentRegistry";
 import type { ComponentInfo, UIForkProps } from "../types";
+import styles from "./UIFork.module.css";
 
 /**
  * UIFork - A floating UI component that renders a version picker in the bottom right.
@@ -660,38 +661,17 @@ export function UIFork({ port = 3001 }: UIForkProps) {
         aria-label="Select UI version"
         aria-expanded={isOpen}
         aria-haspopup="listbox"
-        style={{
-          position: "fixed",
-          bottom: "20px",
-          right: "20px",
-          zIndex: 1000,
-          display: "flex",
-          alignItems: "center",
-          gap: "8px",
-          borderRadius: "8px",
-          backgroundColor: "#262626",
-          padding: "8px 12px",
-          fontSize: "14px",
-          color: "white",
-          border: "none",
-          cursor: "pointer",
-          boxShadow:
-            "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
-        }}
+        className={styles.trigger}
       >
         {/* Connection status indicator */}
         <div
-          style={{
-            width: "8px",
-            height: "8px",
-            borderRadius: "50%",
-            backgroundColor:
-              connectionStatus === "connected"
-                ? "#22c55e"
-                : connectionStatus === "connecting"
-                  ? "#eab308"
-                  : "#ef4444",
-          }}
+          className={`${styles.statusIndicator} ${
+            connectionStatus === "connected"
+              ? styles.statusIndicatorConnected
+              : connectionStatus === "connecting"
+                ? styles.statusIndicatorConnecting
+                : styles.statusIndicatorDisconnected
+          }`}
           title={
             connectionStatus === "connected"
               ? "Connected to watch server"
@@ -701,15 +681,10 @@ export function UIFork({ port = 3001 }: UIForkProps) {
           }
         />
         <span>{selectedComponent || "No component"}</span>
-        <span style={{ color: "#a3a3a3" }}>/</span>
+        <span className={styles.triggerSeparator}>/</span>
         <span>{activeVersion ? formatVersionLabel(activeVersion) : "-"}</span>
         <svg
-          style={{
-            width: "16px",
-            height: "16px",
-            transform: isOpen ? "rotate(180deg)" : "none",
-            transition: "transform 0.2s",
-          }}
+          className={`${styles.triggerIcon} ${isOpen ? styles.triggerIconOpen : ""}`}
           fill="none"
           viewBox="0 0 16 16"
           xmlns="http://www.w3.org/2000/svg"
@@ -730,15 +705,8 @@ export function UIFork({ port = 3001 }: UIForkProps) {
           ref={dropdownRef}
           role="listbox"
           aria-label="UI version options"
+          className={styles.dropdown}
           style={{
-            position: "fixed",
-            zIndex: 1001,
-            minWidth: "200px",
-            borderRadius: "8px",
-            backgroundColor: "#262626",
-            boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
-            border: "1px solid #404040",
-            padding: "4px",
             left: `${position.x}px`,
             top: `${position.y}px`,
             visibility: "hidden",
@@ -748,33 +716,13 @@ export function UIFork({ port = 3001 }: UIForkProps) {
           <button
             data-component-selector
             onClick={() => setIsComponentSelectorOpen(!isComponentSelectorOpen)}
-            style={{
-              display: "flex",
-              width: "100%",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: "8px",
-              padding: "8px 12px",
-              fontSize: "14px",
-              color: "white",
-              backgroundColor: "transparent",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-              textAlign: "left",
-            }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.backgroundColor = "#404040")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.backgroundColor = "transparent")
-            }
+            className={styles.componentSelector}
           >
-            <span style={{ fontWeight: 500 }}>
+            <span className={styles.componentSelectorLabel}>
               {selectedComponent || "Select component"}
             </span>
             <svg
-              style={{ width: "12px", height: "12px" }}
+              className={styles.componentSelectorIcon}
               fill="none"
               viewBox="0 0 16 16"
             >
@@ -788,19 +736,11 @@ export function UIFork({ port = 3001 }: UIForkProps) {
             </svg>
           </button>
 
-          <div style={{ borderTop: "1px solid #404040", margin: "4px 0" }} />
+          <div className={styles.divider} />
 
           {/* Versions list */}
           {versionKeys.length === 0 ? (
-            <div
-              style={{
-                padding: "8px 12px",
-                fontSize: "14px",
-                color: "#a3a3a3",
-              }}
-            >
-              No versions found
-            </div>
+            <div className={styles.emptyState}>No versions found</div>
           ) : (
             versionKeys
               .slice()
@@ -813,12 +753,7 @@ export function UIFork({ port = 3001 }: UIForkProps) {
                   return (
                     <div
                       key={key}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
-                        padding: "8px 12px",
-                      }}
+                      className={styles.versionItemEditing}
                       onClick={(e) => e.stopPropagation()}
                     >
                       <input
@@ -838,16 +773,7 @@ export function UIFork({ port = 3001 }: UIForkProps) {
                           }
                         }}
                         onClick={(e) => e.stopPropagation()}
-                        style={{
-                          flex: 1,
-                          borderRadius: "4px",
-                          backgroundColor: "#404040",
-                          padding: "4px 8px",
-                          fontSize: "14px",
-                          color: "white",
-                          border: "none",
-                          outline: "none",
-                        }}
+                        className={styles.renameInput}
                         placeholder="e.g., v1, v2, v1_2"
                       />
                       <button
@@ -855,21 +781,11 @@ export function UIFork({ port = 3001 }: UIForkProps) {
                           e.stopPropagation();
                           handleConfirmRename(key);
                         }}
-                        style={{
-                          padding: "4px",
-                          borderRadius: "4px",
-                          backgroundColor: "transparent",
-                          border: "none",
-                          cursor: "pointer",
-                        }}
+                        className={styles.confirmButton}
                         title="Confirm rename"
                       >
                         <svg
-                          style={{
-                            width: "16px",
-                            height: "16px",
-                            color: "#22c55e",
-                          }}
+                          className={styles.confirmIcon}
                           fill="none"
                           viewBox="0 0 16 16"
                         >
@@ -887,21 +803,11 @@ export function UIFork({ port = 3001 }: UIForkProps) {
                           e.stopPropagation();
                           handleCancelRename();
                         }}
-                        style={{
-                          padding: "4px",
-                          borderRadius: "4px",
-                          backgroundColor: "transparent",
-                          border: "none",
-                          cursor: "pointer",
-                        }}
+                        className={styles.confirmButton}
                         title="Cancel rename"
                       >
                         <svg
-                          style={{
-                            width: "16px",
-                            height: "16px",
-                            color: "#ef4444",
-                          }}
+                          className={styles.cancelIcon}
                           fill="none"
                           viewBox="0 0 16 16"
                         >
@@ -930,46 +836,13 @@ export function UIFork({ port = 3001 }: UIForkProps) {
                       setOpenPopoverVersion(null);
                       triggerRef.current?.focus();
                     }}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "8px",
-                      padding: "8px 12px",
-                      fontSize: "14px",
-                      color: "white",
-                      backgroundColor: "transparent",
-                      borderRadius: "4px",
-                      cursor: "pointer",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = "#404040";
-                      const actions = e.currentTarget.querySelector(
-                        "[data-actions]",
-                      ) as HTMLElement;
-                      if (actions) actions.style.opacity = "1";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = "transparent";
-                      const actions = e.currentTarget.querySelector(
-                        "[data-actions]",
-                      ) as HTMLElement;
-                      if (actions) actions.style.opacity = "0";
-                    }}
+                    className={styles.versionItem}
                   >
                     {/* Checkmark */}
-                    <div
-                      style={{
-                        width: "16px",
-                        height: "16px",
-                        flexShrink: 0,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
+                    <div className={styles.checkmarkContainer}>
                       {isSelected && (
                         <svg
-                          style={{ width: "16px", height: "16px" }}
+                          className={styles.checkmarkIcon}
                           fill="none"
                           viewBox="0 0 16 16"
                         >
@@ -983,32 +856,18 @@ export function UIFork({ port = 3001 }: UIForkProps) {
                         </svg>
                       )}
                     </div>
-                    <div style={{ flex: 1 }}>{formatVersionLabel(key)}</div>
+                    <div className={styles.versionLabel}>
+                      {formatVersionLabel(key)}
+                    </div>
                     {/* Action buttons */}
-                    <div
-                      data-actions
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "4px",
-                        opacity: 0,
-                        transition: "opacity 0.15s",
-                      }}
-                    >
+                    <div data-actions className={styles.actions}>
                       <button
                         onClick={(e) => handleDuplicateVersion(key, e)}
-                        style={{
-                          padding: "4px",
-                          borderRadius: "4px",
-                          backgroundColor: "transparent",
-                          border: "none",
-                          cursor: "pointer",
-                          color: "white",
-                        }}
+                        className={styles.actionButton}
                         title="Clone version"
                       >
                         <svg
-                          style={{ width: "14px", height: "14px" }}
+                          className={styles.actionIcon}
                           fill="none"
                           viewBox="0 0 16 16"
                         >
@@ -1029,25 +888,18 @@ export function UIFork({ port = 3001 }: UIForkProps) {
                           />
                         </svg>
                       </button>
-                      <div style={{ position: "relative" }}>
+                      <div className={styles.actionButtonMore}>
                         <button
                           ref={(el) => {
                             if (el) popoverTriggerRefs.current.set(key, el);
                             else popoverTriggerRefs.current.delete(key);
                           }}
                           onClick={(e) => handleTogglePopover(key, e)}
-                          style={{
-                            padding: "4px",
-                            borderRadius: "4px",
-                            backgroundColor: "transparent",
-                            border: "none",
-                            cursor: "pointer",
-                            color: "white",
-                          }}
+                          className={styles.actionButton}
                           title="More options"
                         >
                           <svg
-                            style={{ width: "14px", height: "14px" }}
+                            className={styles.actionIcon}
                             fill="none"
                             viewBox="0 0 16 16"
                           >
@@ -1063,16 +915,8 @@ export function UIFork({ port = 3001 }: UIForkProps) {
                               if (el) popoverDropdownRefs.current.set(key, el);
                               else popoverDropdownRefs.current.delete(key);
                             }}
+                            className={styles.popover}
                             style={{
-                              position: "fixed",
-                              zIndex: 1002,
-                              minWidth: "140px",
-                              borderRadius: "8px",
-                              backgroundColor: "#262626",
-                              boxShadow:
-                                "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
-                              border: "1px solid #404040",
-                              padding: "4px",
                               left: `${popoverPositions.current.get(key)?.x || 0}px`,
                               top: `${popoverPositions.current.get(key)?.y || 0}px`,
                               visibility: "hidden",
@@ -1081,31 +925,10 @@ export function UIFork({ port = 3001 }: UIForkProps) {
                           >
                             <button
                               onClick={(e) => handlePromoteVersion(key, e)}
-                              style={{
-                                display: "flex",
-                                width: "100%",
-                                alignItems: "center",
-                                gap: "8px",
-                                padding: "8px 12px",
-                                fontSize: "14px",
-                                color: "white",
-                                backgroundColor: "transparent",
-                                border: "none",
-                                borderRadius: "4px",
-                                cursor: "pointer",
-                                textAlign: "left",
-                              }}
-                              onMouseEnter={(e) =>
-                                (e.currentTarget.style.backgroundColor =
-                                  "#404040")
-                              }
-                              onMouseLeave={(e) =>
-                                (e.currentTarget.style.backgroundColor =
-                                  "transparent")
-                              }
+                              className={styles.popoverMenuItem}
                             >
                               <svg
-                                style={{ width: "16px", height: "16px" }}
+                                className={styles.popoverMenuItemIcon}
                                 fill="none"
                                 viewBox="0 0 16 16"
                               >
@@ -1121,31 +944,10 @@ export function UIFork({ port = 3001 }: UIForkProps) {
                             </button>
                             <button
                               onClick={(e) => handleOpenInEditor(key, e)}
-                              style={{
-                                display: "flex",
-                                width: "100%",
-                                alignItems: "center",
-                                gap: "8px",
-                                padding: "8px 12px",
-                                fontSize: "14px",
-                                color: "white",
-                                backgroundColor: "transparent",
-                                border: "none",
-                                borderRadius: "4px",
-                                cursor: "pointer",
-                                textAlign: "left",
-                              }}
-                              onMouseEnter={(e) =>
-                                (e.currentTarget.style.backgroundColor =
-                                  "#404040")
-                              }
-                              onMouseLeave={(e) =>
-                                (e.currentTarget.style.backgroundColor =
-                                  "transparent")
-                              }
+                              className={styles.popoverMenuItem}
                             >
                               <svg
-                                style={{ width: "16px", height: "16px" }}
+                                className={styles.popoverMenuItemIcon}
                                 fill="none"
                                 viewBox="0 0 16 16"
                               >
@@ -1165,31 +967,10 @@ export function UIFork({ port = 3001 }: UIForkProps) {
                                 handleDeleteVersion(key, e);
                                 setOpenPopoverVersion(null);
                               }}
-                              style={{
-                                display: "flex",
-                                width: "100%",
-                                alignItems: "center",
-                                gap: "8px",
-                                padding: "8px 12px",
-                                fontSize: "14px",
-                                color: "#f87171",
-                                backgroundColor: "transparent",
-                                border: "none",
-                                borderRadius: "4px",
-                                cursor: "pointer",
-                                textAlign: "left",
-                              }}
-                              onMouseEnter={(e) =>
-                                (e.currentTarget.style.backgroundColor =
-                                  "#404040")
-                              }
-                              onMouseLeave={(e) =>
-                                (e.currentTarget.style.backgroundColor =
-                                  "transparent")
-                              }
+                              className={`${styles.popoverMenuItem} ${styles.popoverMenuItemDelete}`}
                             >
                               <svg
-                                style={{ width: "16px", height: "16px" }}
+                                className={styles.popoverMenuItemIcon}
                                 fill="none"
                                 viewBox="0 0 16 16"
                               >
@@ -1209,31 +990,10 @@ export function UIFork({ port = 3001 }: UIForkProps) {
                                 handleRenameVersion(key, e);
                                 setOpenPopoverVersion(null);
                               }}
-                              style={{
-                                display: "flex",
-                                width: "100%",
-                                alignItems: "center",
-                                gap: "8px",
-                                padding: "8px 12px",
-                                fontSize: "14px",
-                                color: "white",
-                                backgroundColor: "transparent",
-                                border: "none",
-                                borderRadius: "4px",
-                                cursor: "pointer",
-                                textAlign: "left",
-                              }}
-                              onMouseEnter={(e) =>
-                                (e.currentTarget.style.backgroundColor =
-                                  "#404040")
-                              }
-                              onMouseLeave={(e) =>
-                                (e.currentTarget.style.backgroundColor =
-                                  "transparent")
-                              }
+                              className={styles.popoverMenuItem}
                             >
                               <svg
-                                style={{ width: "16px", height: "16px" }}
+                                className={styles.popoverMenuItemIcon}
                                 fill="none"
                                 viewBox="0 0 16 16"
                               >
@@ -1256,7 +1016,7 @@ export function UIFork({ port = 3001 }: UIForkProps) {
               })
           )}
 
-          <div style={{ borderTop: "1px solid #404040", margin: "4px 0" }} />
+          <div className={styles.divider} />
 
           {/* New version button */}
           <button
@@ -1265,40 +1025,12 @@ export function UIFork({ port = 3001 }: UIForkProps) {
               setIsOpen(false);
               triggerRef.current?.focus();
             }}
-            style={{
-              display: "flex",
-              width: "100%",
-              alignItems: "center",
-              gap: "8px",
-              padding: "8px 12px",
-              fontSize: "14px",
-              color: "white",
-              backgroundColor: "transparent",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-              textAlign: "left",
-            }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.backgroundColor = "#404040")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.backgroundColor = "transparent")
-            }
+            className={styles.newVersionButton}
             title="Create new version"
           >
-            <div
-              style={{
-                width: "16px",
-                height: "16px",
-                flexShrink: 0,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
+            <div className={styles.newVersionIconContainer}>
               <svg
-                style={{ width: "16px", height: "16px" }}
+                className={styles.newVersionIcon}
                 fill="none"
                 viewBox="0 0 16 16"
               >
@@ -1319,30 +1051,15 @@ export function UIFork({ port = 3001 }: UIForkProps) {
       {isOpen && isComponentSelectorOpen && (
         <div
           ref={componentSelectorRef}
+          className={styles.componentSelectorDropdown}
           style={{
-            position: "fixed",
-            zIndex: 1002,
-            minWidth: "160px",
-            borderRadius: "8px",
-            backgroundColor: "#262626",
-            boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
-            border: "1px solid #404040",
-            padding: "4px",
             left: `${componentSelectorPosition.x}px`,
             top: `${componentSelectorPosition.y}px`,
             visibility: "hidden",
           }}
         >
           {mountedComponents.length === 0 ? (
-            <div
-              style={{
-                padding: "8px 12px",
-                fontSize: "14px",
-                color: "#a3a3a3",
-              }}
-            >
-              No mounted components found
-            </div>
+            <div className={styles.emptyState}>No mounted components found</div>
           ) : (
             mountedComponents.map((component) => (
               <button
@@ -1351,46 +1068,16 @@ export function UIFork({ port = 3001 }: UIForkProps) {
                   setSelectedComponent(component.name);
                   setIsComponentSelectorOpen(false);
                 }}
-                style={{
-                  display: "flex",
-                  width: "100%",
-                  alignItems: "center",
-                  gap: "8px",
-                  padding: "8px 12px",
-                  fontSize: "14px",
-                  color: "white",
-                  backgroundColor:
-                    component.name === selectedComponent
-                      ? "#404040"
-                      : "transparent",
-                  border: "none",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                  textAlign: "left",
-                }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.backgroundColor = "#404040")
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.backgroundColor =
-                    component.name === selectedComponent
-                      ? "#404040"
-                      : "transparent")
-                }
+                className={`${styles.componentSelectorItem} ${
+                  component.name === selectedComponent
+                    ? styles.componentSelectorItemSelected
+                    : ""
+                }`}
               >
-                <div
-                  style={{
-                    width: "16px",
-                    height: "16px",
-                    flexShrink: 0,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
+                <div className={styles.componentSelectorItemCheckmarkContainer}>
                   {component.name === selectedComponent && (
                     <svg
-                      style={{ width: "16px", height: "16px" }}
+                      className={styles.componentSelectorItemCheckmark}
                       fill="none"
                       viewBox="0 0 16 16"
                     >
@@ -1405,13 +1092,7 @@ export function UIFork({ port = 3001 }: UIForkProps) {
                   )}
                 </div>
                 <span>{component.name}</span>
-                <span
-                  style={{
-                    marginLeft: "auto",
-                    color: "#a3a3a3",
-                    fontSize: "12px",
-                  }}
-                >
+                <span className={styles.componentSelectorItemCount}>
                   {component.versions.length}
                 </span>
               </button>
