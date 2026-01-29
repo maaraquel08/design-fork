@@ -387,7 +387,6 @@ export function UIFork({ port = 3001 }: UIForkProps) {
               >
                 {selectedComponent || "No component"}
               </motion.span>
-              <span className={styles.triggerSeparator}>/</span>
               <span className={styles.triggerVersion}>
                 {activeVersion ? formatVersionLabel(activeVersion) : "-"}
               </span>
