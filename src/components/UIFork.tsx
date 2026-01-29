@@ -642,13 +642,11 @@ export function UIFork({ port = 3001 }: UIForkProps) {
   };
 
   useEffect(() => {
-    setTimeout(() => {
-      setIsMounted(true);
-    }, 100);
+    setIsMounted(true);
   }, []);
 
-  // Don't render if not in browser
-  if (typeof window === "undefined") {
+  // Don't render until mounted on client (prevents hydration mismatch)
+  if (!isMounted) {
     return null;
   }
 
