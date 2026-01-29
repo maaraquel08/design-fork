@@ -455,6 +455,31 @@ export const UISwitcher = <T extends Record<string, unknown>>({
     setOpenPopoverVersion(openPopoverVersion === version ? null : version);
   };
 
+  const handleOpenInEditor = async (version: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const port =
+      (typeof window !== "undefined" &&
+        (window as { __UIFORK_PORT__?: string }).__UIFORK_PORT__) ||
+      "3001";
+    try {
+      const response = await fetch(`http://localhost:${port}/open-in-editor`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ version }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        console.error("[UISwitcher] Error opening in editor:", error.error);
+      }
+    } catch (error) {
+      console.error("[UISwitcher] Error opening in editor:", error);
+    }
+    setOpenPopoverVersion(null);
+  };
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!e.metaKey) return;
@@ -998,6 +1023,28 @@ export const UISwitcher = <T extends Record<string, unknown>>({
                                   />
                                 </svg>
                                 <span>Promote</span>
+                              </button>
+                              {/* Open in editor option */}
+                              <button
+                                onClick={(e) => handleOpenInEditor(key, e)}
+                                className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-white transition-colors hover:bg-neutral-700 focus:bg-neutral-700 focus:outline-none rounded"
+                                role="menuitem"
+                              >
+                                <svg
+                                  className="h-4 w-4"
+                                  fill="none"
+                                  viewBox="0 0 16 16"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path
+                                    d="M5.333 2.667H3.333a1.333 1.333 0 0 0-1.333 1.333v8a1.333 1.333 0 0 0 1.333 1.333h9.334a1.333 1.333 0 0 0 1.333-1.333V10M10.667 2.667h3.333M14 2.667v3.333M8 8l6-6"
+                                    stroke="currentColor"
+                                    strokeWidth="1.5"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                  />
+                                </svg>
+                                <span>Open in editor</span>
                               </button>
                               {/* Delete option */}
                               <button
