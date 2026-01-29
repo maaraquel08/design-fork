@@ -4,6 +4,7 @@ import { CheckmarkIcon } from "./icons/CheckmarkIcon";
 import { CopyIcon } from "./icons/CopyIcon";
 import { MoreOptionsIcon } from "./icons/MoreOptionsIcon";
 import { VersionActionMenu } from "./VersionActionMenu";
+import { Tooltip } from "./Tooltip";
 
 interface VersionItemProps {
   version: string;
@@ -57,28 +58,30 @@ export function VersionItem({
         className={styles.actions}
         onClick={(e) => e.stopPropagation()}
       >
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onDuplicate(version, e);
-          }}
-          className={styles.actionButton}
-          title="Clone version"
-        >
-          <CopyIcon className={styles.actionIcon} />
-        </button>
-        <div className={styles.actionButtonMore}>
+        <Tooltip label="Clone version" placement="top">
           <button
-            ref={(el) => setPopoverTriggerRef(version, el)}
             onClick={(e) => {
               e.stopPropagation();
-              onTogglePopover(version, e);
+              onDuplicate(version, e);
             }}
             className={styles.actionButton}
-            title="More options"
           >
-            <MoreOptionsIcon className={styles.actionIcon} />
+            <CopyIcon className={styles.actionIcon} />
           </button>
+        </Tooltip>
+        <div className={styles.actionButtonMore}>
+          <Tooltip label="More options" placement="top">
+            <button
+              ref={(el) => setPopoverTriggerRef(version, el)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onTogglePopover(version, e);
+              }}
+              className={styles.actionButton}
+            >
+              <MoreOptionsIcon className={styles.actionIcon} />
+            </button>
+          </Tooltip>
           {/* Popover menu */}
           {isPopoverOpen && (
             <VersionActionMenu
