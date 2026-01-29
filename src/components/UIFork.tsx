@@ -12,16 +12,13 @@ import { useLocalStorage } from "../hooks/useLocalStorage";
 import { getMountedComponents, subscribe } from "../utils/componentRegistry";
 import type { ComponentInfo, UIForkProps } from "../types";
 import styles from "./UIFork.module.css";
-import { ChevronRightIcon } from "./icons/ChevronRightIcon";
 import { CheckmarkIcon } from "./icons/CheckmarkIcon";
-import { CancelIcon } from "./icons/CancelIcon";
-import { CopyIcon } from "./icons/CopyIcon";
-import { MoreOptionsIcon } from "./icons/MoreOptionsIcon";
-import { PromoteIcon } from "./icons/PromoteIcon";
-import { OpenInEditorIcon } from "./icons/OpenInEditorIcon";
-import { DeleteIcon } from "./icons/DeleteIcon";
-import { RenameIcon } from "./icons/RenameIcon";
 import { PlusIcon } from "./icons/PlusIcon";
+import {
+  ComponentSelector,
+  ComponentSelectorDropdown,
+} from "./ComponentSelector";
+import { VersionsList } from "./VersionsList";
 
 // Animation duration constant (in seconds)
 const ANIMATION_DURATION = 0.3;
@@ -510,41 +507,59 @@ export function UIFork({ port = 3001 }: UIForkProps) {
   // Position popover menus
   useEffect(() => {
     if (!openPopoverVersion) return;
-    const trigger = popoverTriggerRefs.current.get(openPopoverVersion);
-    const dropdown = popoverDropdownRefs.current.get(openPopoverVersion);
-    if (!trigger || !dropdown) return;
-    const updatePosition = async () => {
-      try {
-        const { x, y } = await computePosition(trigger, dropdown, {
-          placement: "bottom-end",
-          strategy: "fixed",
-          middleware: [
-            offset(4),
-            flip({
-              fallbackPlacements: ["bottom-start", "top-end", "top-start"],
-            }),
-            shift({ padding: 8 }),
-          ],
-        });
-        popoverPositions.current.set(openPopoverVersion, { x, y });
-        dropdown.style.visibility = "visible";
-      } catch (error) {
-        console.error("Error positioning popover:", error);
-      }
-    };
-    dropdown.style.visibility = "hidden";
-    updatePosition();
-    const cleanup = autoUpdate(trigger, dropdown, updatePosition);
-    return cleanup;
-  }, [openPopoverVersion]);
 
-  // Focus input when entering rename mode
-  useEffect(() => {
-    if (editingVersion && renameInputRef.current) {
-      renameInputRef.current.focus();
-      renameInputRef.current.select();
-    }
-  }, [editingVersion]);
+    let cleanup: (() => void) | null = null;
+    let cancelled = false;
+
+    const setupPositioning = () => {
+      const trigger = popoverTriggerRefs.current.get(openPopoverVersion);
+      const dropdown = popoverDropdownRefs.current.get(openPopoverVersion);
+
+      if (!trigger || !dropdown) {
+        // Retry on next frame if refs aren't ready yet
+        if (!cancelled) {
+          requestAnimationFrame(setupPositioning);
+        }
+        return;
+      }
+
+      const updatePosition = async () => {
+        if (cancelled) return;
+        try {
+          const { x, y } = await computePosition(trigger, dropdown, {
+            placement: "bottom-end",
+            strategy: "fixed",
+            middleware: [
+              offset(4),
+              flip({
+                fallbackPlacements: ["bottom-start", "top-end", "top-start"],
+              }),
+              shift({ padding: 8 }),
+            ],
+          });
+          if (!cancelled) {
+            popoverPositions.current.set(openPopoverVersion, { x, y });
+            dropdown.style.visibility = "visible";
+          }
+        } catch (error) {
+          console.error("Error positioning popover:", error);
+        }
+      };
+
+      dropdown.style.visibility = "hidden";
+      updatePosition();
+      cleanup = autoUpdate(trigger, dropdown, updatePosition);
+    };
+
+    // Use requestAnimationFrame to ensure refs are set and DOM is ready
+    const frameId = requestAnimationFrame(setupPositioning);
+
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(frameId);
+      if (cleanup) cleanup();
+    };
+  }, [openPopoverVersion]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -708,211 +723,48 @@ export function UIFork({ port = 3001 }: UIForkProps) {
               }}
             >
               {/* Component selector */}
-              <button
-                data-component-selector
-                onClick={() =>
+              <ComponentSelector
+                selectedComponent={selectedComponent}
+                onToggle={() =>
                   setIsComponentSelectorOpen(!isComponentSelectorOpen)
                 }
-                className={styles.componentSelector}
-              >
-                <motion.span
-                  layoutId="component-name"
-                  layout="position"
-                  className={styles.componentSelectorLabel}
-                  transition={{
-                    duration: ANIMATION_DURATION,
-                    ease: ANIMATION_EASING,
-                  }}
-                >
-                  {selectedComponent || "Select component"}
-                </motion.span>
-                <ChevronRightIcon className={styles.componentSelectorIcon} />
-              </button>
+              />
 
               <div className={styles.divider} />
 
               {/* Versions list */}
-              <div className={styles.versionsList}>
-                {versionKeys.length === 0 ? (
-                  <div className={styles.emptyState}>No versions found</div>
-                ) : (
-                  versionKeys
-                    .slice()
-                    .reverse()
-                    .map((key) => {
-                      const isSelected = key === activeVersion;
-                      const isEditing = editingVersion === key;
-
-                      if (isEditing) {
-                        return (
-                          <div
-                            key={key}
-                            className={styles.versionItemEditing}
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <input
-                              ref={renameInputRef}
-                              type="text"
-                              value={renameValue}
-                              onChange={(e) => setRenameValue(e.target.value)}
-                              onKeyDown={(e) => {
-                                if (e.key === "Enter") {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  handleConfirmRename(key);
-                                } else if (e.key === "Escape") {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  handleCancelRename();
-                                }
-                              }}
-                              onClick={(e) => e.stopPropagation()}
-                              className={styles.renameInput}
-                              placeholder="e.g., v1, v2, v1_2"
-                            />
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleConfirmRename(key);
-                              }}
-                              className={styles.confirmButton}
-                              title="Confirm rename"
-                            >
-                              <CheckmarkIcon className={styles.confirmIcon} />
-                            </button>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleCancelRename();
-                              }}
-                              className={styles.confirmButton}
-                              title="Cancel rename"
-                            >
-                              <CancelIcon className={styles.cancelIcon} />
-                            </button>
-                          </div>
-                        );
-                      }
-
-                      return (
-                        <div
-                          key={key}
-                          role="option"
-                          aria-selected={isSelected}
-                          data-key={key}
-                          onClick={() => {
-                            setActiveVersion(key);
-                            setIsOpen(false);
-                            setOpenPopoverVersion(null);
-                            triggerRef.current?.focus();
-                          }}
-                          className={styles.versionItem}
-                        >
-                          {/* Checkmark */}
-                          <div className={styles.checkmarkContainer}>
-                            {isSelected && (
-                              <CheckmarkIcon className={styles.checkmarkIcon} />
-                            )}
-                          </div>
-                          <div className={styles.versionLabel}>
-                            {formatVersionLabel(key)}
-                          </div>
-                          {/* Action buttons */}
-                          <div data-actions className={styles.actions}>
-                            <button
-                              onClick={(e) => handleDuplicateVersion(key, e)}
-                              className={styles.actionButton}
-                              title="Clone version"
-                            >
-                              <CopyIcon className={styles.actionIcon} />
-                            </button>
-                            <div className={styles.actionButtonMore}>
-                              <button
-                                ref={(el) => {
-                                  if (el)
-                                    popoverTriggerRefs.current.set(key, el);
-                                  else popoverTriggerRefs.current.delete(key);
-                                }}
-                                onClick={(e) => handleTogglePopover(key, e)}
-                                className={styles.actionButton}
-                                title="More options"
-                              >
-                                <MoreOptionsIcon
-                                  className={styles.actionIcon}
-                                />
-                              </button>
-                              {/* Popover menu */}
-                              {openPopoverVersion === key && (
-                                <div
-                                  ref={(el) => {
-                                    if (el)
-                                      popoverDropdownRefs.current.set(key, el);
-                                    else
-                                      popoverDropdownRefs.current.delete(key);
-                                  }}
-                                  className={styles.popover}
-                                  style={{
-                                    left: `${popoverPositions.current.get(key)?.x || 0}px`,
-                                    top: `${popoverPositions.current.get(key)?.y || 0}px`,
-                                    visibility: "hidden",
-                                  }}
-                                  role="menu"
-                                >
-                                  <button
-                                    onClick={(e) =>
-                                      handlePromoteVersion(key, e)
-                                    }
-                                    className={styles.popoverMenuItem}
-                                  >
-                                    <PromoteIcon
-                                      className={styles.popoverMenuItemIcon}
-                                    />
-                                    <span>Promote</span>
-                                  </button>
-                                  <button
-                                    onClick={(e) => handleOpenInEditor(key, e)}
-                                    className={styles.popoverMenuItem}
-                                  >
-                                    <OpenInEditorIcon
-                                      className={styles.popoverMenuItemIcon}
-                                    />
-                                    <span>Open in editor</span>
-                                  </button>
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleDeleteVersion(key, e);
-                                      setOpenPopoverVersion(null);
-                                    }}
-                                    className={`${styles.popoverMenuItem} ${styles.popoverMenuItemDelete}`}
-                                  >
-                                    <DeleteIcon
-                                      className={styles.popoverMenuItemIcon}
-                                    />
-                                    <span>Delete</span>
-                                  </button>
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleRenameVersion(key, e);
-                                      setOpenPopoverVersion(null);
-                                    }}
-                                    className={styles.popoverMenuItem}
-                                  >
-                                    <RenameIcon
-                                      className={styles.popoverMenuItemIcon}
-                                    />
-                                    <span>Rename</span>
-                                  </button>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })
-                )}
-              </div>
+              <VersionsList
+                versionKeys={versionKeys}
+                activeVersion={activeVersion}
+                editingVersion={editingVersion}
+                renameValue={renameValue}
+                formatVersionLabel={formatVersionLabel}
+                openPopoverVersion={openPopoverVersion}
+                popoverPositions={popoverPositions.current}
+                onSelectVersion={(version) => {
+                  setActiveVersion(version);
+                  setIsOpen(false);
+                  setOpenPopoverVersion(null);
+                  triggerRef.current?.focus();
+                }}
+                onDuplicateVersion={handleDuplicateVersion}
+                onTogglePopover={handleTogglePopover}
+                onPromoteVersion={handlePromoteVersion}
+                onOpenInEditor={handleOpenInEditor}
+                onDeleteVersion={handleDeleteVersion}
+                onRenameVersion={handleRenameVersion}
+                onRenameValueChange={setRenameValue}
+                onConfirmRename={handleConfirmRename}
+                onCancelRename={handleCancelRename}
+                setPopoverTriggerRef={(version, el) => {
+                  if (el) popoverTriggerRefs.current.set(version, el);
+                  else popoverTriggerRefs.current.delete(version);
+                }}
+                setPopoverDropdownRef={(version, el) => {
+                  if (el) popoverDropdownRefs.current.set(version, el);
+                  else popoverDropdownRefs.current.delete(version);
+                }}
+              />
 
               <div className={styles.divider} />
 
@@ -937,47 +789,18 @@ export function UIFork({ port = 3001 }: UIForkProps) {
       </motion.div>
 
       {/* Component selector dropdown */}
-      {isOpen && isComponentSelectorOpen && (
-        <div
-          ref={componentSelectorRef}
-          className={styles.componentSelectorDropdown}
-          style={{
-            left: `${componentSelectorPosition.x}px`,
-            top: `${componentSelectorPosition.y}px`,
-            visibility: "hidden",
+      {isOpen && (
+        <ComponentSelectorDropdown
+          mountedComponents={mountedComponents}
+          selectedComponent={selectedComponent}
+          isOpen={isComponentSelectorOpen}
+          position={componentSelectorPosition}
+          onSelect={(componentName) => {
+            setSelectedComponent(componentName);
+            setIsComponentSelectorOpen(false);
           }}
-        >
-          {mountedComponents.length === 0 ? (
-            <div className={styles.emptyState}>No mounted components found</div>
-          ) : (
-            mountedComponents.map((component) => (
-              <button
-                key={component.name}
-                onClick={() => {
-                  setSelectedComponent(component.name);
-                  setIsComponentSelectorOpen(false);
-                }}
-                className={`${styles.componentSelectorItem} ${
-                  component.name === selectedComponent
-                    ? styles.componentSelectorItemSelected
-                    : ""
-                }`}
-              >
-                <div className={styles.componentSelectorItemCheckmarkContainer}>
-                  {component.name === selectedComponent && (
-                    <CheckmarkIcon
-                      className={styles.componentSelectorItemCheckmark}
-                    />
-                  )}
-                </div>
-                <span>{component.name}</span>
-                <span className={styles.componentSelectorItemCount}>
-                  {component.versions.length}
-                </span>
-              </button>
-            ))
-          )}
-        </div>
+          componentSelectorRef={componentSelectorRef}
+        />
       )}
     </>,
     document.body,

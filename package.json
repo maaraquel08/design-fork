@@ -56,6 +56,7 @@
     }
   },
   "dependencies": {
+    "@base-ui/react": "^1.1.0",
     "@floating-ui/dom": "^1.6.0",
     "chokidar": "^3.5.3",
     "cors": "^2.8.5",
