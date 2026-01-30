@@ -152,6 +152,14 @@
   color: var(--uifork-fg-secondary);
 }
 
+/* Trigger icon container */
+.triggerIconContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* Trigger icon */
 .triggerIcon {
   width: 16px;
@@ -160,6 +168,19 @@
 }
 .triggerIcon.triggerIconOpen {
   transform: rotate(180deg);
+}
+
+/* Connection error dot (red dot in bottom right of branch icon) */
+.connectionErrorDot {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--uifork-status-disconnected);
+  border: 2px solid var(--uifork-bg-dark);
+  box-sizing: border-box;
 }
 
 /* Dropdown content */
@@ -289,6 +310,15 @@
   margin: 0;
   line-height: 1.4;
   max-width: 200px;
+}
+
+.inlineCode {
+  font-family: monospace;
+  font-size: 13px;
+  background-color: var(--uifork-bg-input);
+  padding: 2px 4px;
+  border-radius: 3px;
+  color: var(--uifork-fg);
 }
 
 .emptyStateCommandContainer {

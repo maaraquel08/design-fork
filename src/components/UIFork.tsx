@@ -729,32 +729,29 @@ export function UIFork({ port = 3001 }: UIForkProps) {
               }}
               draggable={false}
             >
-              {mountedComponents.length === 0 ? (
+              {(connectionStatus === "disconnected" ||
+                connectionStatus === "failed") ? (
+                <div className={styles.triggerIconContainer}>
+                  <BranchIcon className={styles.triggerIcon} />
+                  <div
+                    className={styles.connectionErrorDot}
+                    title="Disconnected from watch server"
+                  />
+                </div>
+              ) : mountedComponents.length === 0 ? (
                 <BranchIcon className={styles.triggerIcon} />
               ) : (
                 <>
-                  {connectionStatus === "failed" && (
+                  {connectionStatus === "connecting" && (
                     <div
-                      className={`${styles.statusIndicator} ${styles.statusIndicatorFailed}`}
-                      title="Failed to connect to watch server"
+                      className={`${styles.statusIndicator} ${styles.statusIndicatorConnecting}`}
+                      title="Connecting..."
                     />
                   )}
-                  {connectionStatus !== "failed" && (
+                  {connectionStatus === "connected" && (
                     <div
-                      className={`${styles.statusIndicator} ${
-                        connectionStatus === "connected"
-                          ? styles.statusIndicatorConnected
-                          : connectionStatus === "connecting"
-                          ? styles.statusIndicatorConnecting
-                          : styles.statusIndicatorDisconnected
-                      }`}
-                      title={
-                        connectionStatus === "connected"
-                          ? "Connected to watch server"
-                          : connectionStatus === "connecting"
-                          ? "Connecting..."
-                          : "Disconnected from watch server"
-                      }
+                      className={`${styles.statusIndicator} ${styles.statusIndicatorConnected}`}
+                      title="Connected to watch server"
                     />
                   )}
                   <BranchIcon className={styles.triggerIcon} />
@@ -791,7 +788,17 @@ export function UIFork({ port = 3001 }: UIForkProps) {
                 ease: ANIMATION_EASING,
               }}
             >
-              {mountedComponents.length === 0 ? (
+              {connectionStatus === "disconnected" ||
+              connectionStatus === "failed" ? (
+                <div className={styles.emptyStateContainer}>
+                  <h3 className={styles.emptyStateHeading}>
+                    Connection lost
+                  </h3>
+                  <p className={styles.emptyStateText}>
+                    You need to run <code className={styles.inlineCode}>uifork watch</code> to connect to the watch server
+                  </p>
+                </div>
+              ) : mountedComponents.length === 0 ? (
                 <div className={styles.emptyStateContainer}>
                   <h3 className={styles.emptyStateHeading}>
                     Get started with uifork

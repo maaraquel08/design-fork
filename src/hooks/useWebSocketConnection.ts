@@ -47,6 +47,15 @@ export function useWebSocketConnection({
   const onVersionAckRef = useRef(onVersionAck);
   const onPromotedRef = useRef(onPromoted);
   const onErrorRef = useRef(onError);
+  const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isConnectingRef = useRef(false);
+  const wsConnectionRef = useRef<WebSocket | null>(null);
+  const shouldReconnectRef = useRef(true);
+
+  // Keep wsConnectionRef in sync with state
+  useEffect(() => {
+    wsConnectionRef.current = wsConnection;
+  }, [wsConnection]);
 
   useEffect(() => {
     selectedComponentRef.current = selectedComponent;
@@ -60,22 +69,39 @@ export function useWebSocketConnection({
     onErrorRef.current = onError;
   }, [onFileChanged, onComponentsUpdate, onVersionAck, onPromoted, onError]);
 
-  // WebSocket connection management
-  useEffect(() => {
-    const wsUrl = `ws://localhost:${port}/ws`;
+  // WebSocket connection function
+  const connectWebSocket = useCallback(() => {
+    // Don't create a new connection if we're already connected or connecting
+    if (
+      wsConnectionRef.current?.readyState === WebSocket.OPEN ||
+      isConnectingRef.current
+    ) {
+      return;
+    }
 
+    const wsUrl = `ws://localhost:${port}/ws`;
+    isConnectingRef.current = true;
     setConnectionStatus("connecting");
+
     const ws = new WebSocket(wsUrl);
     let hasConnected = false;
 
     ws.onopen = () => {
       hasConnected = true;
+      isConnectingRef.current = false;
       setConnectionStatus("connected");
       setWsConnection(ws);
+      wsConnectionRef.current = ws;
       onFileChangedRef.current?.();
+      // Clear any pending reconnection attempts
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+        reconnectTimeoutRef.current = null;
+      }
     };
 
     ws.onclose = () => {
+      isConnectingRef.current = false;
       // Only mark as failed if we never successfully connected
       if (!hasConnected) {
         setConnectionStatus("failed");
@@ -83,10 +109,25 @@ export function useWebSocketConnection({
         setConnectionStatus("disconnected");
       }
       setWsConnection(null);
+      wsConnectionRef.current = null;
+
+      // Schedule reconnection attempt after 3 seconds (only if we should reconnect)
+      if (shouldReconnectRef.current) {
+        if (reconnectTimeoutRef.current) {
+          clearTimeout(reconnectTimeoutRef.current);
+        }
+        reconnectTimeoutRef.current = setTimeout(() => {
+          reconnectTimeoutRef.current = null;
+          if (shouldReconnectRef.current) {
+            connectWebSocket();
+          }
+        }, 3000);
+      }
     };
 
     ws.onerror = (error) => {
       console.error("[UIFork] WebSocket error:", error);
+      isConnectingRef.current = false;
       // Mark as failed if we haven't connected yet
       if (!hasConnected) {
         setConnectionStatus("failed");
@@ -128,13 +169,38 @@ export function useWebSocketConnection({
         console.error("[UIFork] Error parsing WebSocket message:", error);
       }
     };
+  }, [port]);
+
+  // Initial connection and reconnection polling
+  useEffect(() => {
+    shouldReconnectRef.current = true;
+    
+    // Close any existing connection before creating a new one
+    if (wsConnectionRef.current?.readyState === WebSocket.OPEN) {
+      wsConnectionRef.current.close();
+    }
+    // Clear any pending reconnection attempts
+    if (reconnectTimeoutRef.current) {
+      clearTimeout(reconnectTimeoutRef.current);
+      reconnectTimeoutRef.current = null;
+    }
+    
+    connectWebSocket();
 
     return () => {
-      if (ws.readyState === WebSocket.OPEN) {
-        ws.close();
+      // Prevent reconnection attempts during cleanup
+      shouldReconnectRef.current = false;
+      
+      // Cleanup: close connection and clear reconnection timeout
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+        reconnectTimeoutRef.current = null;
+      }
+      if (wsConnectionRef.current?.readyState === WebSocket.OPEN) {
+        wsConnectionRef.current.close();
       }
     };
-  }, [port]);
+  }, [port, connectWebSocket]);
 
   // Send WebSocket message helper
   const sendMessage = useCallback(
