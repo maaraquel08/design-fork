@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import styles from "./UIFork.module.css";
 import { CheckmarkIcon } from "./icons/CheckmarkIcon";
-import { CopyIcon } from "./icons/CopyIcon";
+import { GitForkIcon } from "./icons/GitForkIcon";
 import { MoreOptionsIcon } from "./icons/MoreOptionsIcon";
 import { VersionActionMenu } from "./VersionActionMenu";
 import { Tooltip } from "./Tooltip";
@@ -58,7 +58,7 @@ export function VersionItem({
         className={styles.actions}
         onClick={(e) => e.stopPropagation()}
       >
-        <Tooltip label="Clone version" placement="top">
+        <Tooltip label="Fork version" placement="top">
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -66,7 +66,7 @@ export function VersionItem({
             }}
             className={`${styles.actionButton}`}
           >
-            <CopyIcon className={styles.actionIcon} />
+            <GitForkIcon className={styles.actionIcon} />
           </button>
         </Tooltip>
         <div className={styles.actionButtonMore}>

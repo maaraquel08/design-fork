@@ -516,6 +516,9 @@
   color: var(--uifork-fg-secondary);
   flex-shrink: 0;
 }
+.popoverMenuItem.popoverMenuItemDelete .popoverMenuItemIcon {
+  color: var(--uifork-accent-delete);
+}
 
 /* Confirm/Cancel buttons */
 .confirmButton {

@@ -53,6 +53,15 @@ export function VersionActionMenu({
       role="menu"
     >
       <MenuItem
+        icon={RenameIcon}
+        label="Rename"
+        stopPropagation
+        onClick={(e) => {
+          onRename(version, e);
+          onClose();
+        }}
+      />
+      <MenuItem
         icon={PromoteIcon}
         label="Promote"
         onClick={(e) => {
@@ -68,6 +77,7 @@ export function VersionActionMenu({
           onClose();
         }}
       />
+      <div className={styles.divider} />
       <MenuItem
         icon={DeleteIcon}
         label="Delete"
@@ -75,15 +85,6 @@ export function VersionActionMenu({
         stopPropagation
         onClick={(e) => {
           onDelete(version, e);
-          onClose();
-        }}
-      />
-      <MenuItem
-        icon={RenameIcon}
-        label="Rename"
-        stopPropagation
-        onClick={(e) => {
-          onRename(version, e);
           onClose();
         }}
       />
