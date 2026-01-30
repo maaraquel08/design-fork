@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-export type ConnectionStatus = "connected" | "disconnected" | "connecting";
+export type ConnectionStatus = "connected" | "disconnected" | "connecting" | "failed";
 
 export type WebSocketMessageType =
   | "duplicate_version"
@@ -13,6 +13,11 @@ interface UseWebSocketConnectionOptions {
   port: number;
   selectedComponent: string;
   onFileChanged?: () => void;
+  onComponentsUpdate?: (components: Array<{
+    name: string;
+    path: string;
+    versions: string[];
+  }>) => void;
   onVersionAck?: (payload: {
     version: string;
     message?: string;
@@ -26,6 +31,7 @@ export function useWebSocketConnection({
   port,
   selectedComponent,
   onFileChanged,
+  onComponentsUpdate,
   onVersionAck,
   onPromoted,
   onError,
@@ -37,6 +43,7 @@ export function useWebSocketConnection({
   // Keep refs for callbacks to avoid reconnection on callback changes
   const selectedComponentRef = useRef(selectedComponent);
   const onFileChangedRef = useRef(onFileChanged);
+  const onComponentsUpdateRef = useRef(onComponentsUpdate);
   const onVersionAckRef = useRef(onVersionAck);
   const onPromotedRef = useRef(onPromoted);
   const onErrorRef = useRef(onError);
@@ -47,10 +54,11 @@ export function useWebSocketConnection({
 
   useEffect(() => {
     onFileChangedRef.current = onFileChanged;
+    onComponentsUpdateRef.current = onComponentsUpdate;
     onVersionAckRef.current = onVersionAck;
     onPromotedRef.current = onPromoted;
     onErrorRef.current = onError;
-  }, [onFileChanged, onVersionAck, onPromoted, onError]);
+  }, [onFileChanged, onComponentsUpdate, onVersionAck, onPromoted, onError]);
 
   // WebSocket connection management
   useEffect(() => {
@@ -58,21 +66,33 @@ export function useWebSocketConnection({
 
     setConnectionStatus("connecting");
     const ws = new WebSocket(wsUrl);
+    let hasConnected = false;
 
     ws.onopen = () => {
+      hasConnected = true;
       setConnectionStatus("connected");
       setWsConnection(ws);
       onFileChangedRef.current?.();
     };
 
     ws.onclose = () => {
-      setConnectionStatus("disconnected");
+      // Only mark as failed if we never successfully connected
+      if (!hasConnected) {
+        setConnectionStatus("failed");
+      } else {
+        setConnectionStatus("disconnected");
+      }
       setWsConnection(null);
     };
 
     ws.onerror = (error) => {
       console.error("[UIFork] WebSocket error:", error);
-      setConnectionStatus("disconnected");
+      // Mark as failed if we haven't connected yet
+      if (!hasConnected) {
+        setConnectionStatus("failed");
+      } else {
+        setConnectionStatus("disconnected");
+      }
     };
 
     ws.onmessage = (event) => {
@@ -80,7 +100,9 @@ export function useWebSocketConnection({
         const data = JSON.parse(event.data);
         console.log("[WebSocket] Received:", data);
 
-        if (data.type === "file_changed") {
+        if (data.type === "components" && data.payload?.components) {
+          onComponentsUpdateRef.current?.(data.payload.components);
+        } else if (data.type === "file_changed") {
           onFileChangedRef.current?.();
         } else if (data.type === "ack" && data.payload?.version) {
           const message = data.payload.message || "";

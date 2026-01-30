@@ -21,23 +21,19 @@ export function useComponentDiscovery({ port }: UseComponentDiscoveryOptions) {
     mountedComponentIds.includes(c.name),
   );
 
-  // Fetch components from server
-  const fetchComponents = useCallback(async () => {
-    try {
-      const response = await fetch(`http://localhost:${port}/components`);
-      if (response.ok) {
-        const data = await response.json();
-        setComponents(data.components || []);
+  // Handle components update from WebSocket
+  const handleComponentsUpdate = useCallback((wsComponents: Array<{
+    name: string;
+    path: string;
+    versions: string[];
+  }>) => {
+    setComponents(wsComponents);
 
-        // If no component selected yet, select the first one
-        if (!selectedComponent && data.components?.length > 0) {
-          setSelectedComponent(data.components[0].name);
-        }
-      }
-    } catch (error) {
-      console.error("[UIFork] Error fetching components:", error);
+    // If no component selected yet, select the first one
+    if (!selectedComponent && wsComponents.length > 0) {
+      setSelectedComponent(wsComponents[0].name);
     }
-  }, [port, selectedComponent, setSelectedComponent]);
+  }, [selectedComponent, setSelectedComponent]);
 
   // Subscribe to component registry changes
   useEffect(() => {
@@ -86,17 +82,12 @@ export function useComponentDiscovery({ port }: UseComponentDiscoveryOptions) {
     setSelectedComponent,
   ]);
 
-  // Fetch components on mount
-  useEffect(() => {
-    fetchComponents();
-  }, [fetchComponents]);
-
   return {
     components,
     mountedComponents,
     mountedComponentIds,
     selectedComponent,
     setSelectedComponent,
-    fetchComponents,
+    onComponentsUpdate: handleComponentsUpdate,
   };
 }

@@ -123,6 +123,20 @@
   background-color: var(--uifork-status-disconnected);
 }
 
+.statusIndicatorFailed {
+  background-color: var(--uifork-status-disconnected);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
 /* Trigger separator */
 .triggerSeparator {
   color: var(--uifork-fg-secondary);
@@ -161,7 +175,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  padding: 4px;
+  padding: 0px;
 }
 
 /* Component selector button */

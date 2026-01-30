@@ -114,7 +114,7 @@ export function UIFork({ port = 3001 }: UIForkProps) {
     mountedComponents,
     selectedComponent,
     setSelectedComponent,
-    fetchComponents,
+    onComponentsUpdate,
   } = useComponentDiscovery({ port });
 
   // Keep ref updated with current selected component
@@ -146,7 +146,7 @@ export function UIFork({ port = 3001 }: UIForkProps) {
   const { connectionStatus, sendMessage } = useWebSocketConnection({
     port,
     selectedComponent,
-    onFileChanged: fetchComponents,
+    onComponentsUpdate,
     onVersionAck: ({ version, message, newVersion }) => {
       console.log("[UIFork] onVersionAck:", { version, message, newVersion });
       let versionToActivate: string | null = null;
@@ -163,7 +163,6 @@ export function UIFork({ port = 3001 }: UIForkProps) {
       if (versionToActivate) {
         console.log("[UIFork] Activating version:", versionToActivate);
         storePendingVersion(versionToActivate);
-        fetchComponents();
       }
     },
     onPromoted: (promotedComponent) => {
@@ -205,8 +204,7 @@ export function UIFork({ port = 3001 }: UIForkProps) {
         setTimeout(ensureRemoval, 50);
         setTimeout(ensureRemoval, 100);
       }
-      // Fetch components after clearing (this might auto-select another component)
-      fetchComponents();
+      // Components will be updated automatically via WebSocket
     },
     onError: clearEditingOnError,
   });
@@ -368,7 +366,9 @@ export function UIFork({ port = 3001 }: UIForkProps) {
     e.stopPropagation();
     if (
       window.confirm(
-        `Are you sure you want to promote version ${formatVersionLabel(version)}?\n\nThis will:\n- Replace the main component with this version\n- Remove all versioning scaffolding\n- This action cannot be undone`,
+        `Are you sure you want to promote version ${formatVersionLabel(
+          version,
+        )}?\n\nThis will:\n- Replace the main component with this version\n- Remove all versioning scaffolding\n- This action cannot be undone`,
       )
     ) {
       sendMessage("promote_version", { version });
@@ -553,12 +553,9 @@ export function UIFork({ port = 3001 }: UIForkProps) {
   useEffect(() => {
     if (resetDrag && !isDragging) {
       // Reset flag after animation completes
-      const timer = setTimeout(
-        () => {
-          setResetDrag(false);
-        },
-        ANIMATION_DURATION * 1000 + 50,
-      );
+      const timer = setTimeout(() => {
+        setResetDrag(false);
+      }, ANIMATION_DURATION * 1000 + 50);
       return () => clearTimeout(timer);
     }
   }, [resetDrag, isDragging]);
@@ -736,22 +733,30 @@ export function UIFork({ port = 3001 }: UIForkProps) {
                 <BranchIcon className={styles.triggerIcon} />
               ) : (
                 <>
-                  <div
-                    className={`${styles.statusIndicator} ${
-                      connectionStatus === "connected"
-                        ? styles.statusIndicatorConnected
-                        : connectionStatus === "connecting"
+                  {connectionStatus === "failed" && (
+                    <div
+                      className={`${styles.statusIndicator} ${styles.statusIndicatorFailed}`}
+                      title="Failed to connect to watch server"
+                    />
+                  )}
+                  {connectionStatus !== "failed" && (
+                    <div
+                      className={`${styles.statusIndicator} ${
+                        connectionStatus === "connected"
+                          ? styles.statusIndicatorConnected
+                          : connectionStatus === "connecting"
                           ? styles.statusIndicatorConnecting
                           : styles.statusIndicatorDisconnected
-                    }`}
-                    title={
-                      connectionStatus === "connected"
-                        ? "Connected to watch server"
-                        : connectionStatus === "connecting"
+                      }`}
+                      title={
+                        connectionStatus === "connected"
+                          ? "Connected to watch server"
+                          : connectionStatus === "connecting"
                           ? "Connecting..."
                           : "Disconnected from watch server"
-                    }
-                  />
+                      }
+                    />
+                  )}
                   <BranchIcon className={styles.triggerIcon} />
                   <motion.span
                     layoutId="component-name"
