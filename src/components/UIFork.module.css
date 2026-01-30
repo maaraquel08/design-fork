@@ -212,7 +212,7 @@
 .componentSelectorRow {
   display: flex;
   align-items: center;
-  gap: 4px;
+  justify-content: space-between;
   padding: 0px;
 }
 
@@ -225,17 +225,15 @@
   border: none;
   border-radius: 8px;
   cursor: pointer;
-}
-.componentSelector:hover {
-  background-color: var(--uifork-hover-bg);
-}
-.componentSelector {
-  flex: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
   text-align: left;
+  flex-shrink: 0;
+}
+.componentSelector:hover {
+  background-color: var(--uifork-hover-bg);
 }
 
 .componentSelectorLabel {
@@ -583,7 +581,7 @@
 .componentSelectorDropdown {
   position: fixed;
   z-index: 1002;
-  min-width: 160px;
+  width: max-content;
   border-radius: 12px;
   background-color: var(--uifork-bg-dark);
   box-shadow: var(--uifork-shadow-md);
@@ -597,7 +595,6 @@
 /* Component selector item */
 .componentSelectorItem {
   display: flex;
-  width: 100%;
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
@@ -608,6 +605,7 @@
   border-radius: 4px;
   cursor: pointer;
   text-align: left;
+  white-space: nowrap;
 }
 .componentSelectorItem:hover, .componentSelectorItem.componentSelectorItemSelected {
   background-color: var(--uifork-hover-bg);
