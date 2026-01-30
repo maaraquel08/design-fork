@@ -170,6 +170,10 @@
   white-space: nowrap;
 }
 
+.triggerLabel {
+  font-weight: 500;
+}
+
 .triggerVersion {
   color: var(--uifork-fg-secondary);
 }
@@ -589,6 +593,7 @@
   position: fixed;
   z-index: 1002;
   width: max-content;
+  min-width: 220px;
   border-radius: 12px;
   background-color: var(--uifork-bg-dark);
   box-shadow: var(--uifork-shadow-md);
@@ -612,7 +617,7 @@
   border-radius: 4px;
   cursor: pointer;
   text-align: left;
-  white-space: nowrap;
+  width: 100%;
 }
 .componentSelectorItem:hover, .componentSelectorItem.componentSelectorItemSelected {
   background-color: var(--uifork-hover-bg);
@@ -632,10 +637,19 @@
   height: 16px;
 }
 
+.componentSelectorItemName {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .componentSelectorItemCount {
   margin-left: auto;
   color: var(--uifork-text-muted);
   font-size: 12px;
+  flex-shrink: 0;
 }
 
 .componentSelectorDropdownTitle {

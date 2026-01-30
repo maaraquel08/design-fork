@@ -104,7 +104,7 @@ export function ComponentSelectorDropdown({
                 />
               )}
             </div>
-            <span>{component.name}</span>
+            <span className={styles.componentSelectorItemName}>{component.name}</span>
             <span className={styles.componentSelectorItemCount}>
               {component.versions.length}
             </span>
