@@ -39,6 +39,14 @@ const ANIMATION_DURATION = 0.3;
 // Animation easing curve (cubic-bezier)
 const ANIMATION_EASING = [0.04, 1.02, 0.13, 1.02] as const;
 
+// UI View States
+type ActiveView =
+  | "closed-trigger"
+  | "opened-version-list"
+  | "opened-no-components"
+  | "opened-no-connection"
+  | "opened-settings";
+
 /**
  * UIFork - A floating UI component that renders a version picker in the bottom right.
  * It communicates with the uifork watch server to manage component versions.
@@ -650,6 +658,28 @@ export function UIFork({ port = 3001 }: UIForkProps) {
     };
   }, [isMounted, theme, styles]);
 
+  // Determine active view based on current state
+  const activeView: ActiveView = React.useMemo(() => {
+    if (!isOpen) {
+      return "closed-trigger";
+    }
+
+    // When dropdown is open, determine which view to show
+    if (connectionStatus === "disconnected" || connectionStatus === "failed") {
+      return "opened-no-connection";
+    }
+
+    if (isSettingsOpen) {
+      return "opened-settings";
+    }
+
+    if (mountedComponents.length === 0) {
+      return "opened-no-components";
+    }
+
+    return "opened-version-list";
+  }, [isOpen, connectionStatus, isSettingsOpen, mountedComponents.length]);
+
   // Don't render until mounted on client (prevents hydration mismatch)
   if (!isMounted) {
     return null;
@@ -699,7 +729,7 @@ export function UIFork({ port = 3001 }: UIForkProps) {
         }}
       >
         <AnimatePresence mode="popLayout" initial={false}>
-          {!isOpen ? (
+          {activeView === "closed-trigger" ? (
             <motion.button
               key="trigger"
               suppressHydrationWarning
@@ -729,8 +759,8 @@ export function UIFork({ port = 3001 }: UIForkProps) {
               }}
               draggable={false}
             >
-              {(connectionStatus === "disconnected" ||
-                connectionStatus === "failed") ? (
+              {connectionStatus === "disconnected" ||
+              connectionStatus === "failed" ? (
                 <div className={styles.triggerIconContainer}>
                   <BranchIcon className={styles.triggerIcon} />
                   <div
@@ -788,17 +818,18 @@ export function UIFork({ port = 3001 }: UIForkProps) {
                 ease: ANIMATION_EASING,
               }}
             >
-              {connectionStatus === "disconnected" ||
-              connectionStatus === "failed" ? (
+              {activeView === "opened-no-connection" && (
                 <div className={styles.emptyStateContainer}>
-                  <h3 className={styles.emptyStateHeading}>
-                    Connection lost
-                  </h3>
+                  <h3 className={styles.emptyStateHeading}>Connection lost</h3>
                   <p className={styles.emptyStateText}>
-                    You need to run <code className={styles.inlineCode}>uifork watch</code> to connect to the watch server
+                    You need to run{" "}
+                    <code className={styles.inlineCode}>uifork watch</code> to
+                    connect to the watch server
                   </p>
                 </div>
-              ) : mountedComponents.length === 0 ? (
+              )}
+
+              {activeView === "opened-no-components" && (
                 <div className={styles.emptyStateContainer}>
                   <h3 className={styles.emptyStateHeading}>
                     Get started with uifork
@@ -823,7 +854,9 @@ export function UIFork({ port = 3001 }: UIForkProps) {
                     )}
                   </button>
                 </div>
-              ) : isSettingsOpen ? (
+              )}
+
+              {activeView === "opened-settings" && (
                 <SettingsView
                   onBack={() => setIsSettingsOpen(false)}
                   theme={theme}
@@ -833,7 +866,9 @@ export function UIFork({ port = 3001 }: UIForkProps) {
                   codeEditor={codeEditor}
                   setCodeEditor={setCodeEditor}
                 />
-              ) : (
+              )}
+
+              {activeView === "opened-version-list" && (
                 <>
                   {/* Component selector */}
                   <ComponentSelector
@@ -897,7 +932,7 @@ export function UIFork({ port = 3001 }: UIForkProps) {
       </motion.div>
 
       {/* Component selector dropdown */}
-      {isOpen && (
+      {activeView !== "closed-trigger" && (
         <ComponentSelectorDropdown
           mountedComponents={mountedComponents}
           selectedComponent={selectedComponent}
