@@ -39,6 +39,24 @@ $z-trigger: 1000;
 $z-dropdown: 1001;
 $z-popover: 1002;
 
+// Animation constants (matching UIFork.tsx)
+$animation-duration: 0.2s;
+$animation-easing: cubic-bezier(0.04, 1.02, 0.13, 1.02);
+
+// Popover fade in animation with scale, opacity, and blur
+@keyframes popoverFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+
 // Base menu item mixin
 @mixin menuItemBase {
   padding: $spacing-sm $spacing-md;
@@ -359,6 +377,8 @@ $z-popover: 1002;
   border: 1px solid $border-color;
   padding: $spacing-xs;
   font-family: $font-family;
+  transform-origin: left center;
+  animation: popoverFadeIn $animation-duration $animation-easing;
 }
 
 /* Popover menu item */
@@ -446,6 +466,8 @@ $z-popover: 1002;
   border: 1px solid $border-color;
   padding: $spacing-xs;
   font-family: $font-family;
+  transform-origin: right center;
+  animation: popoverFadeIn $animation-duration $animation-easing;
 }
 
 /* Component selector item */
