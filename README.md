@@ -238,9 +238,9 @@ npm link
 
 # To-dos
 
-- Make local react app for testing
+- ~~Make local react app for testing~~
 - Use component file trace for easier initialization
-- Use react lazy imports for versions.ts
+- ~~Use react lazy imports for versions.ts~~
 - Named exports
 - Add skills
 
