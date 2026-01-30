@@ -47,6 +47,7 @@ Options:
   -h, --help     Show this help message
   -v, --version  Show version number
   --W            Don't start watching after init (init command only)
+  --lazy         Use lazy loading for component versions (watch command only)
 `);
 }
 
@@ -95,8 +96,14 @@ switch (command) {
 
   case "watch":
     // Watch can be called without arguments - defaults to current directory
+    // Parse --lazy flag
+    const lazyMode = args.includes("--lazy");
+    // Filter out flags to get the actual directory argument
+    const watchDir = args.find(
+      (arg, index) => index > 0 && !arg.startsWith("--") && arg !== "watch",
+    );
     try {
-      new VersionSync(argument || process.cwd());
+      new VersionSync(watchDir || process.cwd(), { lazy: lazyMode });
     } catch (error) {
       console.error(`Error during watching: ${error.message}`);
       process.exit(1);

@@ -1,6 +1,7 @@
 // Components
 export { UIFork } from "./components/UIFork";
 export { BranchedComponent } from "./components/BranchedComponent";
+export { LazyBranchedComponent } from "./components/LazyBranchedComponent";
 
 // Hooks
 export { useLocalStorage } from "./hooks/useLocalStorage";

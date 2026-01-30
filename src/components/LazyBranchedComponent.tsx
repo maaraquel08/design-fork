@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import {
   registerComponent,
@@ -7,19 +7,18 @@ import {
 import type { BranchedComponentProps } from "../types";
 
 /**
- * A component2 that renders a specific version based on localStorage state.
+ * A component that renders a specific version based on localStorage state.
  * Used to wrap components that have multiple versions managed by uifork.
  *
  * The UIFork component controls which version is active by writing to localStorage.
  * BranchedComponent reads from localStorage and renders the appropriate version.
  */
-export function BranchedComponent<T extends Record<string, unknown>>({
+export function LazyBranchedComponent<T extends Record<string, unknown>>({
   id,
   versions,
   props,
   defaultVersion,
 }: BranchedComponentProps<T>) {
-  const [isMounted, setIsMounted] = useState(false);
   const versionKeys = Object.keys(versions);
   const initialVersion = defaultVersion || versionKeys[0];
 
@@ -68,20 +67,39 @@ export function BranchedComponent<T extends Record<string, unknown>>({
     }
   }, [activeVersion, versionKeys, setActiveVersion]);
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  // Get the version component - prefer active, then last valid, then default
-  const VersionComponent =
+  // Get the version loader - prefer active, then last valid, then default
+  const versionLoader =
     versions[activeVersion]?.render ??
     versions[lastValidVersion]?.render ??
-    versions[versionKeys[0]]?.render;
+    versions[versionKeys[0]].render;
 
-  if (!VersionComponent || !isMounted) {
+  // Handle both static and dynamic imports
+  const [LazyVersion, setLazyVersion] = useState<any>(null);
+
+  useEffect(() => {
+    // Check if it's a dynamic import (function) or static import (component)
+    if (typeof versionLoader === "function") {
+      // Dynamic import - create lazy component
+      const component = lazy(versionLoader as any);
+      setLazyVersion(() => component);
+    } else {
+      // Static import - use directly
+      setLazyVersion(() => versionLoader);
+    }
+  }, [versionLoader]);
+
+  if (!LazyVersion) {
     return null;
   }
 
-  // @ts-ignore
-  return <VersionComponent {...props} />;
+  // Wrap dynamic imports with Suspense
+  if (typeof versionLoader === "function") {
+    return (
+      <Suspense fallback={null}>
+        <LazyVersion {...props} />
+      </Suspense>
+    );
+  }
+
+  return <LazyVersion {...props} />;
 }
