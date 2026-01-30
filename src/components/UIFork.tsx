@@ -387,7 +387,11 @@ export function UIFork({ port = 3001 }: UIForkProps) {
       const response = await fetch(`http://localhost:${port}/open-in-editor`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ version, component: selectedComponent }),
+        body: JSON.stringify({
+          version,
+          component: selectedComponent,
+          editor: codeEditor,
+        }),
       });
       if (!response.ok) {
         const error = await response.json();
