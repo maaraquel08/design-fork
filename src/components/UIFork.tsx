@@ -706,7 +706,7 @@ export function UIFork({ port = 3001 }: UIForkProps) {
     <>
       <motion.div
         ref={containerRef}
-        className={styles.container}
+        className={`${styles.container} ${!isOpen ? styles.containerClosed : ""}`}
         layout
         drag={dragEnabled && !isOpen}
         dragControls={dragControls}
@@ -718,7 +718,7 @@ export function UIFork({ port = 3001 }: UIForkProps) {
         onDragEnd={handleDragEnd}
         animate={resetDrag ? { x: 0, y: 0 } : {}}
         style={{
-          borderRadius: 12,
+          borderRadius: isOpen ? 12 : 16,
           boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
           ...containerPosition,
           transformOrigin,
