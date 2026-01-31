@@ -3,6 +3,16 @@ import { ExampleContainer } from "./components/ExampleContainer";
 import Example1 from "./examples/Example1";
 import Example2 from "./examples/Example2";
 import Example3 from "./examples/Example3";
+import { Button } from "./components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "./components/ui/dropdown-menu";
+import { ChevronDown } from "lucide-react";
 
 function App() {
   const { theme, setTheme } = useTheme();
@@ -12,15 +22,47 @@ function App() {
       <div className="max-w-4xl mx-auto space-y-16">
         <header className="flex items-center justify-between">
           <h1 className="text-sm font-medium text-muted-foreground">uifork</h1>
-          <select
-            value={theme}
-            onChange={(e) => setTheme(e.target.value as "light" | "dark" | "system")}
-            className="text-xs px-2 py-1 rounded border border-input bg-card text-card-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-          >
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
-            <option value="system">System</option>
-          </select>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-xs text-muted-foreground [&_svg:last-child]:h-3 [&_svg:last-child]:w-3 gap-1"
+              >
+                {theme === "light" ? "Light" : theme === "dark" ? "Dark" : "System"}
+                <ChevronDown className="ml-1 text-muted-foreground" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-40" align="end" side="bottom">
+              <DropdownMenuGroup>
+                <DropdownMenuLabel>Theme</DropdownMenuLabel>
+                <DropdownMenuCheckboxItem
+                  checked={theme === "light"}
+                  onCheckedChange={(checked) => {
+                    if (checked) setTheme("light");
+                  }}
+                >
+                  Light
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem
+                  checked={theme === "dark"}
+                  onCheckedChange={(checked) => {
+                    if (checked) setTheme("dark");
+                  }}
+                >
+                  Dark
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem
+                  checked={theme === "system"}
+                  onCheckedChange={(checked) => {
+                    if (checked) setTheme("system");
+                  }}
+                >
+                  System
+                </DropdownMenuCheckboxItem>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </header>
 
         {/* Example 1 */}
