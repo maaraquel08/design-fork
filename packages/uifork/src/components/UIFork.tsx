@@ -1,7 +1,7 @@
 import { autoUpdate, computePosition, flip, offset, shift } from "@floating-ui/dom";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { motion, AnimatePresence, useDragControls } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import type { UIForkProps } from "../types";
 import styles from "./UIFork.module.css";
 import { ComponentSelector, ComponentSelectorDropdown } from "./ComponentSelector";
@@ -19,6 +19,8 @@ import { usePopoverPosition } from "../hooks/usePopoverPosition";
 import { useClickOutside } from "../hooks/useClickOutside";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { useVersionKeyboardShortcuts, useDropdownKeyboard } from "../hooks/useKeyboardShortcuts";
+import { useDragToCorner } from "../hooks/useDragToCorner";
+import { getContainerPosition, getTransformOrigin, type Position } from "../utils/positioning";
 import { ANIMATION_DURATION, ANIMATION_EASING } from "./constants";
 import TriggerContent from "./TriggerContent";
 import { ActiveView } from "./types";
@@ -53,30 +55,6 @@ export function UIFork({ port = 3001 }: UIForkProps) {
     y: 0,
   });
   const [copied, setCopied] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
-  const [resetDrag, setResetDrag] = useState(false);
-  const [dragEnabled, setDragEnabled] = useState(false);
-  const [pointerStart, setPointerStart] = useState<{
-    x: number;
-    y: number;
-    event: PointerEvent | null;
-  } | null>(null);
-
-  // Drag controls for manual drag initiation
-  const dragControls = useDragControls();
-
-  // Drag threshold in pixels
-  const DRAG_THRESHOLD = 5;
-
-  // Settings
-  const [theme, setTheme] = useLocalStorage<"light" | "dark" | "system">("uifork-theme", "system");
-  const [position, setPosition] = useLocalStorage<
-    "top-left" | "top-right" | "bottom-left" | "bottom-right"
-  >("uifork-position", "bottom-right");
-  const [codeEditor, setCodeEditor] = useLocalStorage<"vscode" | "cursor">(
-    "uifork-code-editor",
-    "vscode",
-  );
 
   // Root ref for theme wrapper
   const rootRef = useRef<HTMLDivElement | null>(null);
@@ -87,6 +65,29 @@ export function UIFork({ port = 3001 }: UIForkProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const componentSelectorRef = useRef<HTMLDivElement>(null);
   const selectedComponentRef = useRef<string>("");
+
+  // Settings
+  const [theme, setTheme] = useLocalStorage<"light" | "dark" | "system">("uifork-theme", "system");
+  const [position, setPosition] = useLocalStorage<Position>("uifork-position", "bottom-right");
+  const [codeEditor, setCodeEditor] = useLocalStorage<"vscode" | "cursor">(
+    "uifork-code-editor",
+    "vscode",
+  );
+
+  // Drag to corner hook
+  const {
+    isDragging,
+    resetDrag,
+    dragEnabled,
+    dragControls,
+    handlePointerDown,
+    handleDragStart,
+    handleDragEnd,
+  } = useDragToCorner({
+    isOpen,
+    containerRef,
+    setPosition,
+  });
 
   // Component discovery hook
   const { mountedComponents, selectedComponent, setSelectedComponent, onComponentsUpdate } =
@@ -382,212 +383,10 @@ export function UIFork({ port = 3001 }: UIForkProps) {
     }
   }, []);
 
-  // Calculate nearest corner based on position
-  const getNearestCorner = useCallback(
-    (x: number, y: number): "top-left" | "top-right" | "bottom-left" | "bottom-right" => {
-      const viewportWidth = window.innerWidth;
-      const viewportHeight = window.innerHeight;
-      const centerX = viewportWidth / 2;
-      const centerY = viewportHeight / 2;
-
-      if (x < centerX && y < centerY) {
-        return "top-left";
-      } else if (x >= centerX && y < centerY) {
-        return "top-right";
-      } else if (x < centerX && y >= centerY) {
-        return "bottom-left";
-      } else {
-        return "bottom-right";
-      }
-    },
-    [],
-  );
-
-  // Handle drag end - snap to nearest corner
-  const handleDragEnd = useCallback(
-    (_event: PointerEvent, _info: { point: { x: number; y: number } }) => {
-      setIsDragging(false);
-      setDragEnabled(false);
-      setPointerStart(null);
-
-      // Reset cursor on document body and container
-      document.body.style.removeProperty("cursor");
-      document.body.style.userSelect = "";
-      if (containerRef.current) {
-        containerRef.current.style.removeProperty("cursor");
-        containerRef.current.removeAttribute("data-drag-tracking");
-        containerRef.current.removeAttribute("data-dragging");
-      }
-
-      // Get current container position (includes drag transforms)
-      if (!containerRef.current) return;
-
-      const rect = containerRef.current.getBoundingClientRect();
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
-
-      // Calculate nearest corner based on center of container
-      const nearestCorner = getNearestCorner(centerX, centerY);
-
-      // Update position (will save to localStorage automatically)
-      setPosition(nearestCorner);
-
-      // Trigger reset of drag transforms
-      setResetDrag(true);
-    },
-    [getNearestCorner, setPosition],
-  );
-
-  // Handle pointer down - start tracking for drag threshold
-  const handlePointerDown = useCallback(
-    (e: React.PointerEvent) => {
-      if (isOpen) return; // Don't allow dragging when open
-      const pointerEvent = e.nativeEvent as PointerEvent;
-      setPointerStart({ x: e.clientX, y: e.clientY, event: pointerEvent });
-      setDragEnabled(false);
-      // Add data attribute to container for CSS targeting
-      if (containerRef.current) {
-        containerRef.current.setAttribute("data-drag-tracking", "true");
-      }
-    },
-    [isOpen],
-  );
-
-  // Global pointer move handler to check threshold
-  useEffect(() => {
-    if (!pointerStart || isOpen) return;
-
-    const handlePointerMove = (e: PointerEvent) => {
-      const deltaX = Math.abs(e.clientX - pointerStart.x);
-      const deltaY = Math.abs(e.clientY - pointerStart.y);
-      const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
-      if (distance > DRAG_THRESHOLD && !dragEnabled) {
-        setDragEnabled(true);
-        setResetDrag(false);
-        // Start drag manually using the current pointer event
-        // This ensures drag starts from the current position, not causing a jump
-        dragControls.start(e, { snapToCursor: true });
-      }
-    };
-
-    const handlePointerUp = () => {
-      if (!dragEnabled) {
-        // If drag wasn't enabled, reset everything
-        setPointerStart(null);
-        setDragEnabled(false);
-        // Reset cursor on document body and container
-        document.body.style.removeProperty("cursor");
-        if (containerRef.current) {
-          containerRef.current.style.removeProperty("cursor");
-          containerRef.current.removeAttribute("data-drag-tracking");
-        }
-      }
-    };
-
-    window.addEventListener("pointermove", handlePointerMove);
-    window.addEventListener("pointerup", handlePointerUp);
-
-    return () => {
-      window.removeEventListener("pointermove", handlePointerMove);
-      window.removeEventListener("pointerup", handlePointerUp);
-    };
-  }, [pointerStart, isOpen, dragEnabled, dragControls]);
-
-  // Handle drag start (only called after threshold is crossed)
-  const handleDragStart = useCallback(() => {
-    setIsDragging(true);
-    setResetDrag(false);
-    // Set cursor on document body and container to ensure it stays grabbing
-    // Use !important to override any CSS cursor styles
-    document.body.style.setProperty("cursor", "grabbing", "important");
-    document.body.style.userSelect = "none";
-    if (containerRef.current) {
-      containerRef.current.style.setProperty("cursor", "grabbing", "important");
-      containerRef.current.setAttribute("data-dragging", "true");
-    }
-  }, []);
-
-  // Reset drag transforms after position update
-  useEffect(() => {
-    if (resetDrag && !isDragging) {
-      // Reset flag after animation completes
-      const timer = setTimeout(
-        () => {
-          setResetDrag(false);
-        },
-        ANIMATION_DURATION * 1000 + 50,
-      );
-      return () => clearTimeout(timer);
-    }
-  }, [resetDrag, isDragging]);
-
-  // Cleanup: Reset cursor when dropdown opens or component unmounts
-  useEffect(() => {
-    if (isOpen && (isDragging || dragEnabled)) {
-      // Reset drag state when dropdown opens
-      setIsDragging(false);
-      setDragEnabled(false);
-      setPointerStart(null);
-      document.body.style.cursor = "";
-      document.body.style.userSelect = "";
-    }
-  }, [isOpen, isDragging, dragEnabled]);
-
-  // Cleanup: Reset cursor on unmount
-  useEffect(() => {
-    return () => {
-      document.body.style.removeProperty("cursor");
-      document.body.style.userSelect = "";
-      if (containerRef.current) {
-        containerRef.current.style.removeProperty("cursor");
-        containerRef.current.removeAttribute("data-drag-tracking");
-        containerRef.current.removeAttribute("data-dragging");
-      }
-    };
-  }, []);
-
   // Calculate container position based on settings
-  const containerPosition = React.useMemo(() => {
-    const offset = 20;
-    const positions = {
-      "top-left": {
-        top: `${offset}px`,
-        left: `${offset}px`,
-        bottom: "auto",
-        right: "auto",
-      },
-      "top-right": {
-        top: `${offset}px`,
-        right: `${offset}px`,
-        bottom: "auto",
-        left: "auto",
-      },
-      "bottom-left": {
-        bottom: `${offset}px`,
-        left: `${offset}px`,
-        top: "auto",
-        right: "auto",
-      },
-      "bottom-right": {
-        bottom: `${offset}px`,
-        right: `${offset}px`,
-        top: "auto",
-        left: "auto",
-      },
-    };
-    return positions[position];
-  }, [position]);
+  const containerPosition = React.useMemo(() => getContainerPosition(position), [position]);
 
-  const transformOrigin = React.useMemo(() => {
-    const origins = {
-      "top-left": "top left",
-      "top-right": "top right",
-      "bottom-left": "bottom left",
-      "bottom-right": "bottom right",
-    };
-    return origins[position];
-  }, [position]);
+  const transformOrigin = React.useMemo(() => getTransformOrigin(position), [position]);
 
   // Create or get root element for theming
   useEffect(() => {
