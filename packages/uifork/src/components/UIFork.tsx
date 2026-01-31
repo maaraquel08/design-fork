@@ -10,15 +10,15 @@ import { createPortal } from "react-dom";
 import { motion, AnimatePresence, useDragControls } from "motion/react";
 import type { UIForkProps } from "../types";
 import styles from "./UIFork.module.css";
-import { PlusIcon } from "./icons/PlusIcon";
-import { CopyIcon } from "./icons/CopyIcon";
-import { CheckmarkIcon } from "./icons/CheckmarkIcon";
 import {
   ComponentSelector,
   ComponentSelectorDropdown,
 } from "./ComponentSelector";
 import { VersionsList } from "./VersionsList";
 import { SettingsView } from "./SettingsView";
+import { EmptyStateNoConnection } from "./EmptyStateNoConnection";
+import { EmptyStateNoComponents } from "./EmptyStateNoComponents";
+import { NewVersionButton } from "./NewVersionButton";
 
 // Custom hooks
 import { useWebSocketConnection } from "../hooks/useWebSocketConnection";
@@ -797,56 +797,17 @@ export function UIFork({ port = 3001 }: UIForkProps) {
               }}
             >
               {activeView === "opened-no-connection" && (
-                <div className={styles.emptyStateContainer}>
-                  <h3 className={styles.emptyStateHeading}>
-                    Start the uifork server
-                  </h3>
-                  <p className={styles.emptyStateText}>
-                    Run the watch command in your project root to connect
-                  </p>
-                  <button
-                    onClick={handleCopyWatchCommand}
-                    className={styles.emptyStateCommandContainer}
-                    title="Copy command"
-                    aria-label="Copy command to clipboard"
-                  >
-                    <code className={styles.emptyStateCommand}>
-                      npx uifork watch
-                    </code>
-                    {copied ? (
-                      <CheckmarkIcon className={styles.emptyStateCopyIcon} />
-                    ) : (
-                      <CopyIcon className={styles.emptyStateCopyIcon} />
-                    )}
-                  </button>
-                </div>
+                <EmptyStateNoConnection
+                  onCopyCommand={handleCopyWatchCommand}
+                  copied={copied}
+                />
               )}
 
               {activeView === "opened-no-components" && (
-                <div className={styles.emptyStateContainer}>
-                  <h3 className={styles.emptyStateHeading}>
-                    Get started with uifork
-                  </h3>
-                  <p className={styles.emptyStateText}>
-                    Choose a component and run the command in your root
-                    directory
-                  </p>
-                  <button
-                    onClick={handleCopyCommand}
-                    className={styles.emptyStateCommandContainer}
-                    title="Copy command"
-                    aria-label="Copy command to clipboard"
-                  >
-                    <code className={styles.emptyStateCommand}>
-                      uifork init &lt;path to file&gt;
-                    </code>
-                    {copied ? (
-                      <CheckmarkIcon className={styles.emptyStateCopyIcon} />
-                    ) : (
-                      <CopyIcon className={styles.emptyStateCopyIcon} />
-                    )}
-                  </button>
-                </div>
+                <EmptyStateNoComponents
+                  onCopyCommand={handleCopyCommand}
+                  copied={copied}
+                />
               )}
 
               {activeView === "opened-settings" && (
@@ -905,18 +866,7 @@ export function UIFork({ port = 3001 }: UIForkProps) {
                   <div className={styles.divider} />
 
                   {/* New version button */}
-                  <button
-                    onClick={(e) => {
-                      handleNewVersion(e);
-                    }}
-                    className={`${styles.newVersionButton} ${styles.menuItem}`}
-                    title="Create new version"
-                  >
-                    <div className={styles.newVersionIconContainer}>
-                      <PlusIcon className={styles.newVersionIcon} />
-                    </div>
-                    <span>New version</span>
-                  </button>
+                  <NewVersionButton onClick={handleNewVersion} />
                 </>
               )}
             </motion.div>
