@@ -160,7 +160,7 @@ npx uifork init src/components/Dropdown.tsx
 
 Options:
 
-- `--W` - Don't start watching after init
+- `-w` - Start watching after init (default: don't watch)
 
 ### `npx uifork watch [directory]`
 

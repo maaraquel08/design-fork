@@ -46,7 +46,7 @@ Aliases:
 Options:
   -h, --help     Show this help message
   -v, --version  Show version number
-  --W            Don't start watching after init (init command only)
+  -w             Start watching after init (init command only)
   --lazy         Use lazy loading for component versions (watch command only)
 `);
 }
@@ -85,7 +85,7 @@ switch (command) {
     }
 
     try {
-      const shouldWatch = !args.includes("--W");
+      const shouldWatch = args.includes("-w") || args.includes("--watch");
       const scaffolder = new UISwitcherScaffold(argument, shouldWatch);
       scaffolder.scaffold();
     } catch (error) {
