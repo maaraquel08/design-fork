@@ -8,10 +8,10 @@ import Example1V2 from "./Example1.v2"
 export const VERSIONS = {
   "v1": {
     render: Example1V1,
-    label: "V1",
+    label: "V1 - my label",
   },
   "v2": {
     render: Example1V2,
-    label: "V2",
+    label: "V2 - better one",
   },
 }
