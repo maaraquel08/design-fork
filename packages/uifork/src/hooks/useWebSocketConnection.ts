@@ -7,6 +7,7 @@ export type WebSocketMessageType =
   | "delete_version"
   | "new_version"
   | "rename_version"
+  | "rename_label"
   | "promote_version";
 
 interface UseWebSocketConnectionOptions {

@@ -9,11 +9,11 @@ import Example1V3 from "./Example1.v3"
 export const VERSIONS = {
   "v1": {
     render: Example1V1,
-    label: "My label",
+    label: "Original",
   },
   "v2": {
     render: Example1V2,
-    label: "Better one",
+    label: "Bigger",
   },
   "v3": {
     render: Example1V3,

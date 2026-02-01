@@ -47,7 +47,7 @@ export function VersionNameEditor({
         }}
         onClick={(e) => e.stopPropagation()}
         className={styles.renameInput}
-        placeholder="e.g., v1, v2, v1_2"
+        placeholder="Enter a label for this version"
       />
       <button
         onClick={(e) => {

@@ -112,8 +112,6 @@ export function UIFork({ port = 3001 }: UIForkProps) {
   // Get current component's versions (includes labels)
   const currentComponent = mountedComponents.find((c) => c.name === selectedComponent);
   const versions: VersionInfo[] = currentComponent?.versions || [];
-  // Extract just the keys for hooks that don't need labels
-  const versionKeys = versions.map((v) => v.key);
 
   // Helper to get label for a version key
   const getVersionLabel = (key: string): string | undefined => {
@@ -132,7 +130,8 @@ export function UIFork({ port = 3001 }: UIForkProps) {
     cancelRename,
     clearEditingOnError,
     storePendingVersion,
-  } = useVersionManagement({ selectedComponent, versionKeys });
+    versionKeys,
+  } = useVersionManagement({ selectedComponent, versions });
 
   // WebSocket connection hook
   const { connectionStatus, sendMessage } = useWebSocketConnection({
@@ -277,11 +276,11 @@ export function UIFork({ port = 3001 }: UIForkProps) {
 
   const handleConfirmRename = useCallback(
     (version: string) => {
-      const normalizedVersion = confirmRename(version);
-      if (normalizedVersion) {
-        sendMessage("rename_version", {
+      const newLabel = confirmRename(version);
+      if (newLabel) {
+        sendMessage("rename_label", {
           version,
-          newVersion: normalizedVersion,
+          newLabel,
         });
       }
     },

@@ -1,22 +1,26 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useLocalStorage } from "./useLocalStorage";
+import type { VersionInfo } from "../types";
 
 interface UseVersionManagementOptions {
   selectedComponent: string;
-  versionKeys: string[];
+  versions: VersionInfo[];
 }
 
 export function useVersionManagement({
   selectedComponent,
-  versionKeys,
+  versions,
 }: UseVersionManagementOptions) {
+  // Extract version keys for validation
+  const versionKeys = versions.map((v) => v.key);
+
   const [activeVersion, setActiveVersion] = useLocalStorage<string>(
     selectedComponent || "uifork-default",
     "",
     true,
   );
 
-  // Rename state
+  // Rename state (now for labels)
   const [editingVersion, setEditingVersion] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState<string>("");
   const editingVersionRef = useRef<string | null>(null);
@@ -61,42 +65,42 @@ export function useVersionManagement({
     [selectedComponent],
   );
 
-  // Helper function to normalize version key input
-  const normalizeVersionKey = (input: string): string | null => {
-    if (!input || typeof input !== "string") return null;
-    let normalized = input.trim().toLowerCase();
-    if (!normalized) return null;
-    normalized = normalized.replace(/^v+/i, "");
-    normalized = normalized.replace(/\./g, "_");
-    normalized = "v" + normalized;
-    const versionKeyPattern = /^v\d+(_\d+)?$/;
-    if (!versionKeyPattern.test(normalized)) return null;
-    return normalized;
-  };
+  // Get label for a version key
+  const getVersionLabel = useCallback(
+    (key: string): string | undefined => {
+      return versions.find((v) => v.key === key)?.label;
+    },
+    [versions],
+  );
 
-  // Rename handlers
-  const startRename = useCallback((version: string) => {
-    setEditingVersion(version);
-    setRenameValue(version);
-  }, []);
+  // Rename handlers (now for labels)
+  const startRename = useCallback(
+    (version: string) => {
+      setEditingVersion(version);
+      // Initialize with current label, or empty string if no label
+      const currentLabel = getVersionLabel(version) || "";
+      setRenameValue(currentLabel);
+    },
+    [getVersionLabel],
+  );
 
   const confirmRename = useCallback(
     (version: string): string | null => {
-      const normalizedVersion = normalizeVersionKey(renameValue.trim());
-      if (
-        !normalizedVersion ||
-        normalizedVersion === version ||
-        versionKeys.includes(normalizedVersion)
-      ) {
+      const newLabel = renameValue.trim();
+      const currentLabel = getVersionLabel(version) || "";
+
+      // If label hasn't changed or is empty, cancel
+      if (!newLabel || newLabel === currentLabel) {
         setEditingVersion(null);
         setRenameValue("");
         return null;
       }
+
       setEditingVersion(null);
       setRenameValue("");
-      return normalizedVersion;
+      return newLabel;
     },
-    [renameValue, versionKeys],
+    [renameValue, getVersionLabel],
   );
 
   const cancelRename = useCallback(() => {
@@ -123,5 +127,6 @@ export function useVersionManagement({
     cancelRename,
     clearEditingOnError,
     storePendingVersion,
+    versionKeys,
   };
 }

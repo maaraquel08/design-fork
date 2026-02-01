@@ -690,7 +690,7 @@ class VersionSync {
     const componentName = payload?.component;
 
     // Validate component for operations that need it
-    if (["duplicate_version", "delete_version", "new_version", "rename_version"].includes(type)) {
+    if (["duplicate_version", "delete_version", "new_version", "rename_version", "rename_label"].includes(type)) {
       if (!componentName) {
         ws.send(
           JSON.stringify({
@@ -725,6 +725,9 @@ class VersionSync {
         break;
       case "rename_version":
         this.handleRenameVersion(ws, payload);
+        break;
+      case "rename_label":
+        this.handleRenameLabel(ws, payload);
         break;
       case "promote_version":
         this.handlePromoteVersion(ws, payload);
@@ -1061,6 +1064,69 @@ export default function ${componentName}() {
       );
     } catch (error) {
       console.error(`[WebSocket] Rename version error: ${error.message}`);
+      ws.send(
+        JSON.stringify({
+          type: "error",
+          payload: { message: error.message },
+        }),
+      );
+    }
+  }
+
+  handleRenameLabel(ws, payload) {
+    const { version, newLabel, component } = payload;
+    const manager = this.getComponent(component);
+    const timestamp = new Date().toISOString();
+
+    try {
+      if (!version) {
+        throw new Error("Missing version parameter");
+      }
+
+      if (!newLabel || typeof newLabel !== "string") {
+        throw new Error("Missing or invalid newLabel parameter");
+      }
+
+      if (!manager.validateVersionKey(version)) {
+        throw new Error(`Invalid version format: ${version}`);
+      }
+
+      // Read the current versions file
+      const content = fs.readFileSync(manager.versionsFile, "utf8");
+
+      // Find and update the label for this version
+      // Match the version block and update its label
+      const versionPattern = new RegExp(
+        `(["']?${version}["']?\\s*:\\s*\\{[^}]*label:\\s*["'])([^"']*)(['"])`,
+        "s"
+      );
+
+      if (!versionPattern.test(content)) {
+        throw new Error(`Version ${version} not found in versions file`);
+      }
+
+      const updatedContent = content.replace(versionPattern, `$1${newLabel}$3`);
+
+      fs.writeFileSync(manager.versionsFile, updatedContent, "utf8");
+
+      console.log(`[WebSocket] Rename label: ${version} → "${newLabel}"`);
+      console.log(`  Timestamp: ${timestamp}`);
+      console.log(`  Component: ${manager.componentName}`);
+
+      this.broadcastFileChange(manager.componentName);
+
+      ws.send(
+        JSON.stringify({
+          type: "ack",
+          payload: {
+            message: `Successfully renamed label for ${version}`,
+            version: version,
+            newLabel: newLabel,
+          },
+        }),
+      );
+    } catch (error) {
+      console.error(`[WebSocket] Rename label error: ${error.message}`);
       ws.send(
         JSON.stringify({
           type: "error",
