@@ -43,7 +43,7 @@ import ${this.componentName}V1 from "${v1ImportPath}"
 export const VERSIONS = {
   "v1": {
     render: ${this.componentName}V1,
-    label: "V1",
+    label: "",
   },
 }
 `;
