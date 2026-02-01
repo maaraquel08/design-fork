@@ -92,6 +92,7 @@ export function VersionItem({
             {isPopoverOpen && (
               <VersionActionMenu
                 version={version}
+                label={label}
                 position={popoverPosition || { x: 0, y: 0 }}
                 onPromote={onPromote}
                 onOpenInEditor={onOpenInEditor}

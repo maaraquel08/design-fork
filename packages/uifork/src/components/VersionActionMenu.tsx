@@ -10,6 +10,7 @@ import { useClickOutside } from "../hooks/useClickOutside";
 
 interface VersionActionMenuProps {
   version: string;
+  label?: string;
   position: { x: number; y: number };
   onPromote: (version: string, e: React.MouseEvent) => void;
   onOpenInEditor: (version: string, e: React.MouseEvent) => void;
@@ -21,6 +22,7 @@ interface VersionActionMenuProps {
 
 export function VersionActionMenu({
   version,
+  label,
   position: _position,
   onPromote,
   onOpenInEditor,
@@ -29,6 +31,7 @@ export function VersionActionMenu({
   onClose,
   setDropdownRef,
 }: VersionActionMenuProps) {
+  const renameLabel = label && label.trim() ? "Edit label" : "Add label";
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Combine local ref with callback ref from parent
@@ -79,7 +82,7 @@ export function VersionActionMenu({
     >
       <MenuItem
         icon={RenameIcon}
-        label="Rename"
+        label={renameLabel}
         stopPropagation
         onClick={(e) => {
           onRename(version, e);
