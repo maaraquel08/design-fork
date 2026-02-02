@@ -12,6 +12,16 @@ npm install uifork
 
 Or use yarn, pnpm, or bun.
 
+## Skills
+
+You can install UIFork as a Codex skill using:
+
+```bash
+npx skills add sambernhardt/uifork
+```
+
+Once installed, you can prompt the skill to add UIFork to your app, or to create a forked version of a specific component.
+
 ## Quick Start
 
 ### 1. Add UIFork to your app
@@ -127,8 +137,7 @@ For more control over when UIFork appears, use custom environment variables:
 ```tsx
 // Enable via NEXT_PUBLIC_ENABLE_UIFORK=true or VITE_ENABLE_UIFORK=true
 const showUIFork =
-  process.env.NODE_ENV !== "production" ||
-  process.env.NEXT_PUBLIC_ENABLE_UIFORK === "true";
+  process.env.NODE_ENV !== "production" || process.env.NEXT_PUBLIC_ENABLE_UIFORK === "true";
 
 function App() {
   return (
@@ -141,6 +150,7 @@ function App() {
 ```
 
 This is useful when you want to:
+
 - Show UIFork on specific preview branches
 - Enable it for internal stakeholders on a staging domain
 - Gate it behind a feature flag
