@@ -1,5 +1,6 @@
 import { useTheme } from "./components/theme-provider";
 import { ExampleContainer } from "./components/ExampleContainer";
+import { ExplainerAnimation } from "./components/ExplainerAnimation";
 import Example1 from "./examples/Example1";
 import Example2 from "./examples/Example2";
 import Example3 from "./examples/Example3";
@@ -66,6 +67,9 @@ function App() {
               </DropdownMenuContent>
             </DropdownMenu>
           </header>
+
+          {/* Explainer Animation Hero */}
+          <ExplainerAnimation />
 
           {/* Example 1 */}
           <div className="space-y-4">
