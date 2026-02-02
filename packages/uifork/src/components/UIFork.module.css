@@ -106,6 +106,7 @@
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
+  box-sizing: border-box;
   font-size: 14px;
   color: var(--uifork-fg);
   cursor: pointer;
@@ -119,12 +120,14 @@
 }
 .trigger.triggerIconOnly {
   padding: 4px;
+  box-sizing: border-box;
   width: var(--uifork-trigger-height);
   height: var(--uifork-trigger-height);
   justify-content: center;
 }
 .trigger.triggerEmpty {
   padding: 4px;
+  box-sizing: border-box;
   width: 32px;
   height: 32px;
   justify-content: center;
@@ -234,6 +237,7 @@
 .dropdown {
   min-width: 200px;
   padding: 4px;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
 }
@@ -244,11 +248,13 @@
   align-items: center;
   justify-content: space-between;
   padding: 0px;
+  box-sizing: border-box;
 }
 
 /* Component selector button */
 .componentSelector {
   padding: 8px 12px;
+  box-sizing: border-box;
   font-size: 14px;
   color: var(--uifork-fg);
   background-color: transparent;
@@ -280,6 +286,7 @@
 
 .componentSelectorSettings {
   padding: 8px;
+  box-sizing: border-box;
   background-color: transparent;
   border: none;
   border-radius: 8px;
@@ -328,6 +335,7 @@
 /* Empty state */
 .emptyState {
   padding: 8px 12px;
+  box-sizing: border-box;
   font-size: 14px;
   color: var(--uifork-text-muted);
 }
@@ -338,6 +346,7 @@
   align-items: center;
   justify-content: center;
   padding: 12px;
+  box-sizing: border-box;
   gap: 8px;
   text-align: center;
 }
@@ -362,6 +371,7 @@
   font-size: 13px;
   background-color: var(--uifork-bg-input);
   padding: 2px 4px;
+  box-sizing: border-box;
   border-radius: 3px;
   color: var(--uifork-fg);
 }
@@ -372,6 +382,7 @@
   gap: 4px;
   background-color: var(--uifork-bg-input);
   padding: 4px 8px;
+  box-sizing: border-box;
   border-radius: 4px;
   margin-top: 4px;
   border: none;
@@ -403,6 +414,7 @@
 /* Version item */
 .versionItem {
   padding: 8px 4px 8px 8px;
+  box-sizing: border-box;
   font-size: 14px;
   color: var(--uifork-fg);
   background-color: transparent;
@@ -457,6 +469,7 @@
 /* Editing state - matches versionItem layout */
 .versionItemEditing {
   padding: 8px 4px 8px 8px;
+  box-sizing: border-box;
   font-size: 14px;
   color: var(--uifork-fg);
   background-color: var(--uifork-hover-bg);
@@ -472,6 +485,7 @@
   flex: 1;
   background-color: transparent;
   padding: 0;
+  box-sizing: border-box;
   font-size: 14px;
   color: var(--uifork-fg);
   border: none;
@@ -492,6 +506,7 @@
 
 .actionButton {
   padding: 4px;
+  box-sizing: border-box;
   border-radius: 4px;
   background-color: transparent;
   border: none;
@@ -539,6 +554,7 @@
   box-shadow: var(--uifork-shadow-md);
   border: 1px solid var(--uifork-border-color);
   padding: 4px;
+  box-sizing: border-box;
   font-family:
     system-ui,
     -apple-system,
@@ -562,6 +578,7 @@
   align-items: center;
   gap: 8px;
   padding: 8px 4px 8px 8px;
+  box-sizing: border-box;
   font-size: 14px;
   color: var(--uifork-fg);
   background-color: transparent;
@@ -589,6 +606,7 @@
 /* Confirm/Cancel buttons */
 .confirmButton {
   padding: 4px;
+  box-sizing: border-box;
   border-radius: 4px;
   background-color: transparent;
   border: none;
@@ -610,6 +628,7 @@
 /* New version button */
 .newVersionButton {
   padding: 8px 4px 8px 8px;
+  box-sizing: border-box;
   font-size: 14px;
   color: var(--uifork-fg);
   background-color: transparent;
@@ -657,6 +676,7 @@
   box-shadow: var(--uifork-shadow-md);
   border: 1px solid var(--uifork-border-color);
   padding: 4px;
+  box-sizing: border-box;
   font-family:
     system-ui,
     -apple-system,
@@ -679,6 +699,7 @@
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
+  box-sizing: border-box;
   font-size: 14px;
   color: var(--uifork-fg);
   background-color: transparent;
@@ -726,6 +747,7 @@
   color: var(--uifork-text-muted);
   margin-bottom: 4px;
   padding-left: 4px;
+  box-sizing: border-box;
   font-weight: 500;
 }
 
@@ -733,6 +755,7 @@
   font-size: 11px;
   color: var(--uifork-text-muted);
   padding: 4px 6px 4px;
+  box-sizing: border-box;
   line-height: 1.4;
   max-width: 230px;
   display: flex;
@@ -755,6 +778,7 @@
   background: var(--uifork-bg-hover);
   color: var(--uifork-fg);
   padding: 2px 5px;
+  box-sizing: border-box;
   border-radius: 4px;
 }
 
@@ -764,6 +788,7 @@
   flex-direction: column;
   gap: 12px;
   padding: 8px;
+  box-sizing: border-box;
 }
 
 .settingsBackButton {
@@ -772,6 +797,7 @@
   align-items: center;
   gap: 4px;
   padding: 0;
+  box-sizing: border-box;
   font-size: 14px;
   color: var(--uifork-fg);
   background-color: transparent;
@@ -845,6 +871,7 @@
 .settingsSelect {
   flex: 1;
   padding: 0 12px;
+  box-sizing: border-box;
   height: var(--uifork-trigger-height);
   font-size: 14px;
   color: var(--uifork-fg);
@@ -947,6 +974,7 @@
   position: fixed;
   z-index: 1003;
   padding: 2px 6px;
+  box-sizing: border-box;
   font-size: 12px;
   color: var(--uifork-text-primary);
   background-color: var(--uifork-bg-dark);
@@ -983,6 +1011,7 @@
   border: none;
   cursor: pointer;
   padding: 0;
+  box-sizing: border-box;
   transition: opacity 0.15s;
 }
 
