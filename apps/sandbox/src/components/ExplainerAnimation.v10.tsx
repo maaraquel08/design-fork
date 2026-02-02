@@ -713,7 +713,7 @@ const ANIMATION_TIMELINE: TimelineAction[] = [
   // 1. Move cursor to UIFork button and open dropdown
   // ─────────────────────────────────────────────────────────────────────────────
   { type: "log", message: "Moving to UIFork button" },
-  { type: "moveTo", target: "[data-uifork-trigger]", duration: 2500 },
+  { type: "moveTo", target: "[data-uifork-trigger]", duration: 1200 },
   { type: "wait", duration: 200 },
   { type: "click" },
   {
@@ -726,7 +726,7 @@ const ANIMATION_TIMELINE: TimelineAction[] = [
   // 2. Hover over v3 version
   // ─────────────────────────────────────────────────────────────────────────────
   { type: "log", message: "Hovering over v3" },
-  { type: "moveTo", target: '[data-version="v3"]', duration: 1000 },
+  { type: "moveTo", target: '[data-version="v3"]', duration: 500 },
   {
     type: "setState",
     changes: { uifork: { isOpen: true, hoveredVersion: "v3", versions: ["v1", "v2", "v3"] } },
@@ -737,7 +737,7 @@ const ANIMATION_TIMELINE: TimelineAction[] = [
   // 3. Click fork button on v3
   // ─────────────────────────────────────────────────────────────────────────────
   { type: "log", message: "Clicking fork button" },
-  { type: "moveTo", target: '[data-fork-button="v3"]', duration: 800 },
+  { type: "moveTo", target: '[data-fork-button="v3"]', duration: 400 },
   { type: "wait", duration: 200 },
   { type: "click" },
 
@@ -778,7 +778,7 @@ const ANIMATION_TIMELINE: TimelineAction[] = [
   // 6. Move cursor to code editor and click v4 file
   // ─────────────────────────────────────────────────────────────────────────────
   { type: "log", message: "Moving to v4 file in editor" },
-  { type: "moveTo", target: '[data-file="DashboardContent.v4.tsx"]', duration: 2000 },
+  { type: "moveTo", target: '[data-file="DashboardContent.v4.tsx"]', duration: 900 },
   { type: "wait", duration: 200 },
   { type: "click" },
   {

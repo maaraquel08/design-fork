@@ -63,7 +63,7 @@ export const VERSIONS = {
   },
   "v11": {
     render: ExplainerAnimationV11,
-    label: "",
+    label: "Changing UIs",
   },
   "v12": {
     render: ExplainerAnimationV12,
@@ -71,15 +71,15 @@ export const VERSIONS = {
   },
   "v13": {
     render: ExplainerAnimationV13,
-    label: "",
+    label: "Editing v4 file",
   },
   "v14": {
     render: ExplainerAnimationV14,
-    label: "",
+    label: "Compare at end",
   },
   "v15": {
     render: ExplainerAnimationV15,
-    label: "",
+    label: "Add text; Narrative",
   },
   "v16": {
     render: ExplainerAnimationV16,

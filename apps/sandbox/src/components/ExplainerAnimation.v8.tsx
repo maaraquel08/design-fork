@@ -493,7 +493,7 @@ function FakeCursor({
       });
 
       // Animate to UIFork - slower and smoother
-      const duration = 2500; // 2.5 seconds for slower movement
+      const duration = 1200; // 1.2 seconds for quicker movement
       let animationFrameId: number;
       const startTime = Date.now();
 

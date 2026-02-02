@@ -261,7 +261,10 @@ function useTimeline(
 
         case "addRows":
           setState((s) => {
-            const newRows = Array.from({ length: action.count }, () => Math.floor(Math.random() * 30) + 40);
+            const newRows = Array.from(
+              { length: action.count },
+              () => Math.floor(Math.random() * 30) + 40,
+            );
             return {
               ...s,
               codeEditor: {
@@ -356,7 +359,6 @@ function BrowserFrame({
 }
 
 function CodeEditor({ state }: { state: AnimationState["codeEditor"] }) {
-
   return (
     <div className="w-full h-[360px] bg-card rounded-lg border border-border overflow-hidden shadow-lg flex flex-col">
       {/* Top Toolbar */}
@@ -577,167 +579,167 @@ function MiniUIFork({ state }: { state: AnimationState["uifork"] }) {
       >
         <AnimatePresence mode="popLayout" initial={false}>
           {!state.isOpen ? (
-          <motion.button
-            key="closed"
-            data-uifork-trigger
-            className="flex items-center gap-1.5 px-2 py-1 text-xs text-white dark:text-gray-900 cursor-pointer bg-transparent border-none whitespace-nowrap hover:bg-[rgba(255,255,255,0.1)] dark:hover:bg-gray-100"
-            style={{ height: "24px" }}
-            layout
-          >
-            <svg
-              className="text-[#22c55e] dark:text-[#22c55e]"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              style={{ width: "12px", height: "12px" }}
+            <motion.button
+              key="closed"
+              data-uifork-trigger
+              className="flex items-center gap-1.5 px-2 py-1 text-xs text-white dark:text-gray-900 cursor-pointer bg-transparent border-none whitespace-nowrap hover:bg-[rgba(255,255,255,0.1)] dark:hover:bg-gray-100"
+              style={{ height: "24px" }}
+              layout
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M8 3a2 2 0 1 0 0 4 2 2 0 0 0 0-4ZM8 17a2 2 0 1 0 0 4 2 2 0 0 0 0-4ZM16 7a2 2 0 1 0 0 4 2 2 0 0 0 0-4ZM8 7v6M16 7v6"
-              />
-            </svg>
-            <span className="font-medium text-white dark:text-gray-900 whitespace-nowrap text-xs">
-              DashboardContent
-            </span>
-            <span className="text-[#a3a3a3] dark:text-gray-500 whitespace-nowrap text-xs">
-              {state.activeVersion.replace(/^v/, "V")}
-            </span>
-          </motion.button>
-        ) : (
-          <motion.div
-            key="opened"
-            layout
-            className="p-0.5 flex flex-col"
-            style={{ minWidth: "auto" }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            {/* Component Selector */}
-            <div className="flex items-center justify-between px-1.5 py-1">
+              <svg
+                className="text-[#22c55e] dark:text-[#22c55e]"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                style={{ width: "12px", height: "12px" }}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M8 3a2 2 0 1 0 0 4 2 2 0 0 0 0-4ZM8 17a2 2 0 1 0 0 4 2 2 0 0 0 0-4ZM16 7a2 2 0 1 0 0 4 2 2 0 0 0 0-4ZM8 7v6M16 7v6"
+                />
+              </svg>
+              <span className="font-medium text-white dark:text-gray-900 whitespace-nowrap text-xs">
+                DashboardContent
+              </span>
+              <span className="text-[#a3a3a3] dark:text-gray-500 whitespace-nowrap text-xs">
+                {state.activeVersion.replace(/^v/, "V")}
+              </span>
+            </motion.button>
+          ) : (
+            <motion.div
+              key="opened"
+              layout
+              className="p-0.5 flex flex-col"
+              style={{ minWidth: "auto" }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              {/* Component Selector */}
+              <div className="flex items-center justify-between px-1.5 py-1">
+                <button
+                  className="flex items-center gap-1 text-xs text-white dark:text-gray-900 bg-transparent border-none cursor-pointer rounded hover:bg-[rgba(255,255,255,0.1)] dark:hover:bg-gray-100 flex-1 justify-between"
+                  style={{ height: "24px" }}
+                >
+                  <span className="font-medium text-white dark:text-gray-900 text-xs">
+                    DashboardContent
+                  </span>
+                  <svg
+                    className="w-3 h-3 text-[#a3a3a3] dark:text-gray-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="h-px bg-[#2f2f2f] dark:bg-gray-200 my-0.5" />
+
+              {/* Versions List */}
+              <div className="flex flex-col">
+                {[...state.versions].reverse().map((version) => {
+                  const isHovered = state.hoveredVersion === version;
+                  const isNewVersion = version === "v4";
+
+                  return (
+                    <div
+                      key={version}
+                      data-version={version}
+                      className={`flex items-center gap-1 px-1.5 py-1 text-xs text-white dark:text-gray-900 cursor-pointer rounded relative transition-all duration-200 ${
+                        isHovered
+                          ? "bg-[rgba(255,255,255,0.15)] dark:bg-gray-200"
+                          : "hover:bg-[rgba(255,255,255,0.1)] dark:hover:bg-gray-100"
+                      }`}
+                      style={{
+                        height: "24px",
+                        minHeight: "24px",
+                        animation: isNewVersion ? "fadeIn 0.3s ease-in" : "none",
+                      }}
+                    >
+                      <div className="w-3 h-3 flex items-center justify-center">
+                        {version === state.activeVersion && (
+                          <svg
+                            className="w-2.5 h-2.5 text-white dark:text-gray-900"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M5 13l4 4L19 7"
+                            />
+                          </svg>
+                        )}
+                      </div>
+                      <div className="flex flex-col flex-1 min-w-0">
+                        <span className="text-white dark:text-gray-900 text-xs">
+                          {formatVersionLabel(version)}
+                        </span>
+                      </div>
+                      {/* Fork button */}
+                      <div data-actions className="flex items-center">
+                        <button
+                          data-fork-button={version}
+                          className="w-4 h-4 flex items-center justify-center text-[#a3a3a3] dark:text-gray-500 hover:text-white dark:hover:text-gray-900 rounded transition-colors"
+                          style={{ width: "16px", height: "16px" }}
+                        >
+                          <svg
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            style={{ width: "12px", height: "12px" }}
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={1.5}
+                              d="M8 3a2 2 0 1 0 0 4 2 2 0 0 0 0-4ZM8 17a2 2 0 1 0 0 4 2 2 0 0 0 0-4ZM16 7a2 2 0 1 0 0 4 2 2 0 0 0 0-4ZM8 7v6M16 7v6"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="h-px bg-[#2f2f2f] dark:bg-gray-200 my-0.5" />
+
+              {/* New Version Button */}
               <button
-                className="flex items-center gap-1 text-xs text-white dark:text-gray-900 bg-transparent border-none cursor-pointer rounded hover:bg-[rgba(255,255,255,0.1)] dark:hover:bg-gray-100 flex-1 justify-between"
+                className="flex items-center gap-1 px-1.5 py-1 text-xs text-white dark:text-gray-900 bg-transparent border-none cursor-pointer rounded hover:bg-[rgba(255,255,255,0.1)] dark:hover:bg-gray-100"
                 style={{ height: "24px" }}
               >
-                <span className="font-medium text-white dark:text-gray-900 text-xs">
-                  DashboardContent
-                </span>
-                <svg
-                  className="w-3 h-3 text-[#a3a3a3] dark:text-gray-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </button>
-            </div>
-
-            <div className="h-px bg-[#2f2f2f] dark:bg-gray-200 my-0.5" />
-
-            {/* Versions List */}
-            <div className="flex flex-col">
-              {[...state.versions].reverse().map((version) => {
-                const isHovered = state.hoveredVersion === version;
-                const isNewVersion = version === "v4";
-
-                return (
-                  <div
-                    key={version}
-                    data-version={version}
-                    className={`flex items-center gap-1 px-1.5 py-1 text-xs text-white dark:text-gray-900 cursor-pointer rounded relative transition-all duration-200 ${
-                      isHovered
-                        ? "bg-[rgba(255,255,255,0.15)] dark:bg-gray-200"
-                        : "hover:bg-[rgba(255,255,255,0.1)] dark:hover:bg-gray-100"
-                    }`}
-                    style={{
-                      height: "24px",
-                      minHeight: "24px",
-                      animation: isNewVersion ? "fadeIn 0.3s ease-in" : "none",
-                    }}
+                <div className="w-3 h-3 flex items-center justify-center">
+                  <svg
+                    className="w-2.5 h-2.5 text-white dark:text-gray-900"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
                   >
-                    <div className="w-3 h-3 flex items-center justify-center">
-                      {version === state.activeVersion && (
-                        <svg
-                          className="w-2.5 h-2.5 text-white dark:text-gray-900"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                      )}
-                    </div>
-                    <div className="flex flex-col flex-1 min-w-0">
-                      <span className="text-white dark:text-gray-900 text-xs">
-                        {formatVersionLabel(version)}
-                      </span>
-                    </div>
-                    {/* Fork button */}
-                    <div data-actions className="flex items-center">
-                      <button
-                        data-fork-button={version}
-                        className="w-4 h-4 flex items-center justify-center text-[#a3a3a3] dark:text-gray-500 hover:text-white dark:hover:text-gray-900 rounded transition-colors"
-                        style={{ width: "16px", height: "16px" }}
-                      >
-                        <svg
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          style={{ width: "12px", height: "12px" }}
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={1.5}
-                            d="M8 3a2 2 0 1 0 0 4 2 2 0 0 0 0-4ZM8 17a2 2 0 1 0 0 4 2 2 0 0 0 0-4ZM16 7a2 2 0 1 0 0 4 2 2 0 0 0 0-4ZM8 7v6M16 7v6"
-                          />
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            <div className="h-px bg-[#2f2f2f] dark:bg-gray-200 my-0.5" />
-
-            {/* New Version Button */}
-            <button
-              className="flex items-center gap-1 px-1.5 py-1 text-xs text-white dark:text-gray-900 bg-transparent border-none cursor-pointer rounded hover:bg-[rgba(255,255,255,0.1)] dark:hover:bg-gray-100"
-              style={{ height: "24px" }}
-            >
-              <div className="w-3 h-3 flex items-center justify-center">
-                <svg
-                  className="w-2.5 h-2.5 text-white dark:text-gray-900"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 4v16m8-8H4"
-                  />
-                </svg>
-              </div>
-              <span className="text-white dark:text-gray-900 text-xs">New version</span>
-            </button>
-          </motion.div>
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 4v16m8-8H4"
+                    />
+                  </svg>
+                </div>
+                <span className="text-white dark:text-gray-900 text-xs">New version</span>
+              </button>
+            </motion.div>
           )}
         </AnimatePresence>
       </motion.div>
@@ -832,7 +834,7 @@ const ANIMATION_TIMELINE: TimelineAction[] = [
   // 1. Move cursor to UIFork button and open dropdown
   // ─────────────────────────────────────────────────────────────────────────────
   { type: "log", message: "Moving to UIFork button" },
-  { type: "moveTo", target: "[data-uifork-trigger]", duration: 2500 },
+  { type: "moveTo", target: "[data-uifork-trigger]", duration: 1200 },
   { type: "wait", duration: 200 },
   { type: "click" },
   {
@@ -852,7 +854,7 @@ const ANIMATION_TIMELINE: TimelineAction[] = [
   // 2. Click v2 version
   // ─────────────────────────────────────────────────────────────────────────────
   { type: "log", message: "Moving to v2" },
-  { type: "moveTo", target: '[data-version="v2"]', duration: 800 },
+  { type: "moveTo", target: '[data-version="v2"]', duration: 400 },
   { type: "hover", version: "v2" },
   { type: "wait", duration: 200 },
   { type: "click" },
@@ -873,7 +875,7 @@ const ANIMATION_TIMELINE: TimelineAction[] = [
   // 3. Click v3 version
   // ─────────────────────────────────────────────────────────────────────────────
   { type: "log", message: "Moving to v3" },
-  { type: "moveTo", target: '[data-version="v3"]', duration: 800 },
+  { type: "moveTo", target: '[data-version="v3"]', duration: 400 },
   { type: "hover", version: "v3" },
   { type: "wait", duration: 200 },
   { type: "click" },
@@ -894,7 +896,7 @@ const ANIMATION_TIMELINE: TimelineAction[] = [
   // 4. Hover over v3 version and click fork button
   // ─────────────────────────────────────────────────────────────────────────────
   { type: "log", message: "Hovering over v3 fork button" },
-  { type: "moveTo", target: '[data-version="v3"]', duration: 600 },
+  { type: "moveTo", target: '[data-version="v3"]', duration: 300 },
   {
     type: "setState",
     changes: {
@@ -908,7 +910,7 @@ const ANIMATION_TIMELINE: TimelineAction[] = [
   },
   { type: "wait", duration: 300 },
   { type: "log", message: "Clicking fork button" },
-  { type: "moveTo", target: '[data-fork-button="v3"]', duration: 600 },
+  { type: "moveTo", target: '[data-fork-button="v3"]', duration: 300 },
   { type: "wait", duration: 200 },
   { type: "click" },
 
@@ -956,7 +958,7 @@ const ANIMATION_TIMELINE: TimelineAction[] = [
   // 7. Move cursor to code editor and click v4 file
   // ─────────────────────────────────────────────────────────────────────────────
   { type: "log", message: "Moving to v4 file in editor" },
-  { type: "moveTo", target: '[data-file="DashboardContent.v4.tsx"]', duration: 2000 },
+  { type: "moveTo", target: '[data-file="DashboardContent.v4.tsx"]', duration: 900 },
   { type: "wait", duration: 200 },
   { type: "click" },
   {
@@ -981,7 +983,7 @@ const ANIMATION_TIMELINE: TimelineAction[] = [
   // 8. Move cursor to editor content and start editing
   // ─────────────────────────────────────────────────────────────────────────────
   { type: "log", message: "Moving to editor content" },
-  { type: "moveTo", target: "[data-editor-content]", duration: 1500 },
+  { type: "moveTo", target: "[data-editor-content]", duration: 700 },
   { type: "wait", duration: 200 },
   {
     type: "setState",
@@ -1032,6 +1034,7 @@ const ANIMATION_TIMELINE: TimelineAction[] = [
           "DashboardContent.v4.tsx",
         ],
         isEditing: false,
+        editorRows: [60, 45, 50, 55, 40, 65, 50, 45, 70, 55, 60, 50, 45, 55, 50],
       },
       uifork: {
         isOpen: true,

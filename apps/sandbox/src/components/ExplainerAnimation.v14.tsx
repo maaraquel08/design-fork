@@ -834,7 +834,7 @@ const ANIMATION_TIMELINE: TimelineAction[] = [
   // 1. Move cursor to UIFork button and open dropdown
   // ─────────────────────────────────────────────────────────────────────────────
   { type: "log", message: "Moving to UIFork button" },
-  { type: "moveTo", target: "[data-uifork-trigger]", duration: 2500 },
+  { type: "moveTo", target: "[data-uifork-trigger]", duration: 1200 },
   { type: "wait", duration: 200 },
   { type: "click" },
   {
@@ -854,7 +854,7 @@ const ANIMATION_TIMELINE: TimelineAction[] = [
   // 2. Click v2 version
   // ─────────────────────────────────────────────────────────────────────────────
   { type: "log", message: "Moving to v2" },
-  { type: "moveTo", target: '[data-version="v2"]', duration: 800 },
+  { type: "moveTo", target: '[data-version="v2"]', duration: 400 },
   { type: "hover", version: "v2" },
   { type: "wait", duration: 200 },
   { type: "click" },
@@ -875,7 +875,7 @@ const ANIMATION_TIMELINE: TimelineAction[] = [
   // 3. Click v3 version
   // ─────────────────────────────────────────────────────────────────────────────
   { type: "log", message: "Moving to v3" },
-  { type: "moveTo", target: '[data-version="v3"]', duration: 800 },
+  { type: "moveTo", target: '[data-version="v3"]', duration: 400 },
   { type: "hover", version: "v3" },
   { type: "wait", duration: 200 },
   { type: "click" },
@@ -896,7 +896,7 @@ const ANIMATION_TIMELINE: TimelineAction[] = [
   // 4. Hover over v3 version and click fork button
   // ─────────────────────────────────────────────────────────────────────────────
   { type: "log", message: "Hovering over v3 fork button" },
-  { type: "moveTo", target: '[data-version="v3"]', duration: 600 },
+  { type: "moveTo", target: '[data-version="v3"]', duration: 400 },
   {
     type: "setState",
     changes: {
@@ -910,7 +910,7 @@ const ANIMATION_TIMELINE: TimelineAction[] = [
   },
   { type: "wait", duration: 300 },
   { type: "log", message: "Clicking fork button" },
-  { type: "moveTo", target: '[data-fork-button="v3"]', duration: 600 },
+  { type: "moveTo", target: '[data-fork-button="v3"]', duration: 300 },
   { type: "wait", duration: 200 },
   { type: "click" },
 
@@ -958,7 +958,7 @@ const ANIMATION_TIMELINE: TimelineAction[] = [
   // 7. Move cursor to code editor and click v4 file
   // ─────────────────────────────────────────────────────────────────────────────
   { type: "log", message: "Moving to v4 file in editor" },
-  { type: "moveTo", target: '[data-file="DashboardContent.v4.tsx"]', duration: 2000 },
+  { type: "moveTo", target: '[data-file="DashboardContent.v4.tsx"]', duration: 900 },
   { type: "wait", duration: 200 },
   { type: "click" },
   {
@@ -983,7 +983,7 @@ const ANIMATION_TIMELINE: TimelineAction[] = [
   // 8. Move cursor to editor content and start editing
   // ─────────────────────────────────────────────────────────────────────────────
   { type: "log", message: "Moving to editor content" },
-  { type: "moveTo", target: "[data-editor-content]", duration: 1500 },
+  { type: "moveTo", target: "[data-editor-content]", duration: 700 },
   { type: "wait", duration: 200 },
   {
     type: "setState",
@@ -1049,7 +1049,7 @@ const ANIMATION_TIMELINE: TimelineAction[] = [
   // 12. Move mouse back to UIFork and click through versions
   // ─────────────────────────────────────────────────────────────────────────────
   { type: "log", message: "Moving back to UIFork" },
-  { type: "moveTo", target: '[data-version="v3"]', duration: 1500 },
+  { type: "moveTo", target: '[data-version="v3"]', duration: 400 },
   { type: "hover", version: "v3" },
   { type: "wait", duration: 200 },
   { type: "click" },
@@ -1070,7 +1070,7 @@ const ANIMATION_TIMELINE: TimelineAction[] = [
   // 13. Click v2
   // ─────────────────────────────────────────────────────────────────────────────
   { type: "log", message: "Clicking v2" },
-  { type: "moveTo", target: '[data-version="v2"]', duration: 800 },
+  { type: "moveTo", target: '[data-version="v2"]', duration: 400 },
   { type: "hover", version: "v2" },
   { type: "wait", duration: 200 },
   { type: "click" },
@@ -1091,7 +1091,7 @@ const ANIMATION_TIMELINE: TimelineAction[] = [
   // 14. Click v1
   // ─────────────────────────────────────────────────────────────────────────────
   { type: "log", message: "Clicking v1" },
-  { type: "moveTo", target: '[data-version="v1"]', duration: 800 },
+  { type: "moveTo", target: '[data-version="v1"]', duration: 400 },
   { type: "hover", version: "v1" },
   { type: "wait", duration: 200 },
   { type: "click" },
@@ -1112,7 +1112,7 @@ const ANIMATION_TIMELINE: TimelineAction[] = [
   // 15. Click v4 again
   // ─────────────────────────────────────────────────────────────────────────────
   { type: "log", message: "Clicking v4 again" },
-  { type: "moveTo", target: '[data-version="v4"]', duration: 800 },
+  { type: "moveTo", target: '[data-version="v4"]', duration: 400 },
   { type: "hover", version: "v4" },
   { type: "wait", duration: 200 },
   { type: "click" },
