@@ -29,8 +29,8 @@ export function useVersionKeyboardShortcuts({
         setActiveVersion(versionKeys[nextIndex < versionKeys.length ? nextIndex : 0]);
       }
     };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown, { capture: true });
+    return () => window.removeEventListener("keydown", handleKeyDown, { capture: true });
   }, [activeVersion, versionKeys, setActiveVersion]);
 }
 
