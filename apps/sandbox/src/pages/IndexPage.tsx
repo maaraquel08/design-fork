@@ -4,6 +4,7 @@ import ExplainerAnimation from "../components/ExplainerAnimation";
 import Example1 from "../examples/Example1";
 import Example2 from "../examples/Example2";
 import Example3 from "../examples/Example3";
+import ContactCard from "../components/ContactCard";
 import { Button } from "../components/ui/button";
 import {
   DropdownMenu,
@@ -26,6 +27,13 @@ import { ChevronDown } from "lucide-react";
 
 export function IndexPage() {
   const { theme, setTheme } = useTheme();
+
+  // Contact card data
+  const contacts = [
+    { id: 1, avatar: "👨‍💻", name: "Alex Johnson", profession: "Software Engineer" },
+    { id: 2, avatar: "👩‍🎨", name: "Sarah Chen", profession: "Product Designer" },
+    { id: 3, avatar: "👨‍💼", name: "Michael Brown", profession: "Product Manager" },
+  ];
 
   return (
     <TooltipProvider>
@@ -182,6 +190,23 @@ export function IndexPage() {
                     </div>
                   </DialogContent>
                 </Dialog>
+              </div>
+            </ExampleContainer>
+          </div>
+
+          {/* Contact Cards List */}
+          <div className="space-y-4">
+            <h2 className="text-3xl font-semibold text-foreground">Contact Cards</h2>
+            <ExampleContainer>
+              <div className="grid grid-cols-3 gap-4">
+                {contacts.map((contact) => (
+                  <ContactCard
+                    key={contact.id}
+                    avatar={contact.avatar}
+                    name={contact.name}
+                    profession={contact.profession}
+                  />
+                ))}
               </div>
             </ExampleContainer>
           </div>
