@@ -10,7 +10,7 @@ import {
 } from "../components/ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
 import FakeMessages from "../components/FakeMessages";
-import { CycleText } from "../components/CycleText";
+import CyclingContentWheel from "../components/CycleText";
 import { Container } from "../components/Container";
 
 const headingClassName = "text-base font-semibold text-foreground tracking-tight";
@@ -69,8 +69,21 @@ export function IndexPage() {
         <div className="space-y-16 text-sm">
           <div className="flex flex-col gap-0">
             <h1 className="text-xl font-semibold text-foreground tracking-tight">uifork</h1>
-            <p className="text-muted-foreground leading-relaxed">
-              <CycleText className="" /> iteration for humans and agents.
+            <p className="text-muted-foreground inline-flex items-center gap-1">
+              <span className="inline-block">
+                <CyclingContentWheel
+                  items={["Structured", "Organized", "Fast", "Embedded", "Deployable"]}
+                  radius={14}
+                  transitionDuration={500}
+                  intervalMs={5000}
+                  renderItem={(word: string, distance: number) => (
+                    <div style={{ opacity: 1 - (distance * 3) }}>
+                      {word}
+                    </div>
+                  )}
+                />
+                </span>
+              iteration for humans and agents.
             </p>
           </div>
         </div>

@@ -1,10 +1,34 @@
 import React from "react";
 import { cn } from "../lib/utils";
 
+/**
+ * Avatar color palette map
+ * Maps color IDs to their corresponding Tailwind classes for light and dark modes
+ */
+export const AVATAR_COLORS = {
+  emerald: "bg-emerald-600 text-white dark:bg-emerald-500 dark:text-white",
+  blue: "bg-[#1e90ff] text-white dark:bg-[#1a7feb] dark:text-white",
+  purple: "bg-purple-600 text-white dark:bg-purple-500 dark:text-white",
+  amber: "bg-amber-600 text-white dark:bg-amber-500 dark:text-white",
+  indigo: "bg-indigo-600 text-white dark:bg-indigo-500 dark:text-white",
+  orange: "bg-[#FF6F00] text-white dark:bg-[#e66400] dark:text-white",
+  green: "bg-[#34A853] text-white dark:bg-[#2d9549] dark:text-white",
+  red: "bg-red-600 text-white dark:bg-red-500 dark:text-white",
+  pink: "bg-pink-600 text-white dark:bg-pink-500 dark:text-white",
+  teal: "bg-teal-600 text-white dark:bg-teal-500 dark:text-white",
+  cyan: "bg-cyan-600 text-white dark:bg-cyan-500 dark:text-white",
+  violet: "bg-violet-600 text-white dark:bg-violet-500 dark:text-white",
+  rose: "bg-rose-600 text-white dark:bg-rose-500 dark:text-white",
+  other: "bg-gray-600 text-white dark:bg-gray-500 dark:text-white",
+  me: "bg-[hsl(150,60%,45%)] text-white dark:bg-[hsl(150,56%,37%)] dark:text-white",
+} as const;
+
+export type AvatarColorId = keyof typeof AVATAR_COLORS;
+
 export interface Message {
   id: string;
   user: string;
-  avatarColor: string;
+  avatarColorId: AvatarColorId;
   text: React.ReactNode;
   time: string;
 }
@@ -12,17 +36,19 @@ export interface Message {
 export interface ConversationProps {
   messages: Message[];
   hideAvatar?: boolean;
+  initialDelay?: number;
 }
 
-export function Conversation({ messages, hideAvatar = false }: ConversationProps) {
+export function Conversation({ messages, hideAvatar = false, initialDelay = 0 }: ConversationProps & { initialDelay?: number }) {
   return (
     <div
       className={cn(
-        "rounded-xl border shadow-sm w-full font-sans overflow-hidden",
-        "bg-stone-800 text-stone-50 border-stone-800 dark:bg-stone-50 dark:text-stone-950 dark:border-stone-200",
+        "rounded-xl border shadow-[inset_0_0_10px_1px_rgba(0,0,0,0.025)] w-full",
+        "bg-stone-50 text-stone-950 border-stone-200 dark:bg-stone-800 dark:text-stone-50 dark:border-stone-800",
       )}
+      style={{ fontFamily: "Lato, sans-serif" }}
     >
-      <div className="flex flex-col p-3">
+      <div className="flex flex-col p-2 w-full">
         {messages.map((msg, index) => {
           const previousMessage = index > 0 ? messages[index - 1] : null;
           const isConsecutiveFromSameUser = previousMessage?.user === msg.user;
@@ -31,31 +57,31 @@ export function Conversation({ messages, hideAvatar = false }: ConversationProps
           return (
             <div
               key={msg.id}
-              className={cn("flex gap-3 p-2 -mx-2 rounded-lg fade-in")}
-              style={{ animationDelay: `${index * 80}ms` }}
+              className={cn("flex gap-3 px-2 pt-2 pb-2 rounded-lg message-fade-in", isConsecutiveFromSameUser ? "pt-0" : "")}
+              style={{ animationDelay: `${initialDelay + (index * 500)}ms` }}
             >
               {shouldShowAvatar ? (
                 <div
                   className={cn(
-                    "w-7 h-7 rounded-md shrink-0 flex items-center justify-center font-semibold text-xs shadow-sm",
-                    `${msg.avatarColor} text-white dark:${msg.avatarColor.replace("bg-", "bg-stone-200 ")} dark:text-stone-950`,
+                    "w-9 h-9 rounded-md shrink-0 flex items-center justify-center font-medium text-lg",
+                    AVATAR_COLORS[msg.avatarColorId],
                   )}
                 >
                   {msg.user[0]}
                 </div>
               ) : (
-                <div className="w-7 shrink-0" />
+                <div className="w-9 shrink-0" />
               )}
-              <div className="flex-1 min-w-0 grid gap-0.5">
+              <div className="flex-1 min-w-0 grid">
                 {shouldShowAvatar && (
                   <div className="flex items-baseline gap-2">
-                    <span className="font-semibold text-xs">{msg.user}</span>
-                    <span className="text-[10px] dark:text-stone-600 text-stone-400">
+                    <span className="font-bold text-sm tracking-tight leading-none">{msg.user}</span>
+                    {true && <span className="text-[11px] text-stone-600 dark:text-stone-400">
                       {msg.time}
-                    </span>
-                  </div>
+                    </span>}
+                  </div>    
                 )}
-                <div className="text-[13px] leading-relaxed dark:text-stone-900 text-stone-100">
+                <div className="text-sm leading-relaxed text-stone-900 dark:text-stone-100">
                   {msg.text}
                 </div>
               </div>
@@ -85,55 +111,7 @@ export function FakeMessagesLayout(props: FakeMessagesLayoutProps & FakeMessages
   const { hideAvatar = false } = props;
 
   if (props.layout === "single") {
-    return (
-      <div
-        className={cn(
-          "rounded-xl border shadow-sm w-full font-sans overflow-hidden",
-          "bg-stone-800 text-stone-50 border-stone-800 dark:bg-stone-50 dark:text-stone-950 dark:border-stone-200",
-        )}
-      >
-        <div className="flex flex-col p-4">
-          {props.messages.map((msg, index) => {
-            const previousMessage = index > 0 ? props.messages[index - 1] : null;
-            const isConsecutiveFromSameUser = previousMessage?.user === msg.user;
-            const shouldShowAvatar = !hideAvatar && !isConsecutiveFromSameUser;
-            return (
-              <div
-                key={msg.id}
-                className={cn("flex gap-3 p-2 -mx-2 rounded-lg fade-in")}
-                style={{ animationDelay: `${index * 80}ms` }}
-              >
-                {shouldShowAvatar ? (
-                  <div
-                    className={cn(
-                      "w-9 h-9 rounded-md shrink-0 flex items-center justify-center font-semibold text-sm shadow-sm",
-                      `${msg.avatarColor} text-white dark:${msg.avatarColor.replace("bg-", "bg-stone-200 ")} dark:text-stone-950`,
-                    )}
-                  >
-                    {msg.user[0]}
-                  </div>
-                ) : (
-                  <div className="w-9 shrink-0" />
-                )}
-                <div className="flex-1 min-w-0 grid gap-0.5">
-                  {!hideAvatar && (
-                    <div className="flex items-baseline gap-2">
-                      <span className="font-semibold text-sm">{msg.user}</span>
-                      <span className="text-[11px] dark:text-stone-600 text-stone-400">
-                        {msg.time}
-                      </span>
-                    </div>
-                  )}
-                  <div className="text-[15px] leading-relaxed dark:text-stone-900 text-stone-100">
-                    {msg.text}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    );
+    return <Conversation messages={props.messages} hideAvatar={hideAvatar} />;
   }
 
   const beforeLabel = props.beforeLabel ?? "Before uifork";
@@ -148,7 +126,7 @@ export function FakeMessagesLayout(props: FakeMessagesLayoutProps & FakeMessages
         </div>
         <div className="flex-1 flex flex-col gap-2">
           <div className="text-xs font-medium text-muted-foreground">{afterLabel}</div>
-          <Conversation messages={props.afterMessages} hideAvatar={hideAvatar} />
+          <Conversation messages={props.afterMessages} hideAvatar={hideAvatar} initialDelay={2000} />
         </div>
       </div>
     </div>

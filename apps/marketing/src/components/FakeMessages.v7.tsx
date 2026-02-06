@@ -5,21 +5,21 @@ const messages1: Message[] = [
   {
     id: "1",
     user: "PM",
-    avatarColor: "bg-emerald-600",
+    avatarColorId: "emerald",
     text: "The dropdown felt weird — can you tweak spacing?",
     time: "3:22 PM",
   },
   {
     id: "2",
     user: "Sam",
-    avatarColor: "bg-blue-600",
+    avatarColorId: "blue",
     text: "Sure — new branch is up. You'll need to go through checkout again to test it.",
     time: "3:23 PM",
   },
   {
     id: "3",
     user: "PM",
-    avatarColor: "bg-emerald-600",
+    avatarColorId: "emerald",
     text: "Ugh, I was mid-checkout. Now I have to start over.",
     time: "3:24 PM",
   },
@@ -29,21 +29,21 @@ const messages2: Message[] = [
   {
     id: "1",
     user: "PM",
-    avatarColor: "bg-emerald-600",
+    avatarColorId: "emerald",
     text: "The dropdown felt weird — can you tweak spacing?",
     time: "3:22 PM",
   },
   {
     id: "2",
     user: "Sam",
-    avatarColor: "bg-blue-600",
+    avatarColorId: "blue",
     text: "Forked a version — try it in the same flow.",
     time: "3:23 PM",
   },
   {
     id: "3",
     user: "PM",
-    avatarColor: "bg-emerald-600",
+    avatarColorId: "emerald",
     text: (
       <span>
         <span className="opacity-60 italic">(PM testing mid-checkout)</span>

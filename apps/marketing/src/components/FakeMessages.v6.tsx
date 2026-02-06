@@ -5,14 +5,14 @@ const messages1: Message[] = [
   {
     id: "1",
     user: "Sam",
-    avatarColor: "bg-blue-600",
+    avatarColorId: "blue",
     text: "Forking a version of the signup flow.",
     time: "2:45 PM",
   },
   {
     id: "2",
     user: "Sam",
-    avatarColor: "bg-blue-600",
+    avatarColorId: "blue",
     text: (
       <span>
         <span className="opacity-60 italic">(Cursor prompt visible)</span>
@@ -25,7 +25,7 @@ const messages1: Message[] = [
   {
     id: "3",
     user: "Sam",
-    avatarColor: "bg-blue-600",
+    avatarColorId: "blue",
     text: (
       <span>
         <span className="opacity-60 italic">(versions appear in switcher)</span>
@@ -41,14 +41,14 @@ const messages2: Message[] = [
   {
     id: "1",
     user: "Sam",
-    avatarColor: "bg-blue-600",
+    avatarColorId: "blue",
     text: "Forking a version of the signup flow.",
     time: "2:45 PM",
   },
   {
     id: "2",
     user: "Sam",
-    avatarColor: "bg-blue-600",
+    avatarColorId: "blue",
     text: (
       <span>
         <span className="opacity-60 italic">(Cursor prompt visible)</span>
@@ -61,7 +61,7 @@ const messages2: Message[] = [
   {
     id: "3",
     user: "Sam",
-    avatarColor: "bg-blue-600",
+    avatarColorId: "blue",
     text: (
       <span>
         <span className="opacity-60 italic">(versions appear in switcher)</span>

@@ -75,7 +75,7 @@
 }
 
 @theme inline {
-  --font-sans: "Inter", sans-serif;
+  --font-sans: system-ui, sans-serif;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -145,6 +145,20 @@ body {
 
 .optional-fade-in {
   opacity: 1;
+}
+
+@keyframes messageFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.message-fade-in {
+  animation: messageFadeIn 0.2s ease-out forwards;
+  opacity: 0;
 }
 
 body.demo-animate .optional-fade-in {

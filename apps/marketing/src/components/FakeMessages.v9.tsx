@@ -5,14 +5,14 @@ const messages1: Message[] = [
   {
     id: "1",
     user: "Designer",
-    avatarColor: "bg-purple-600",
+    avatarColorId: "purple",
     text: "Do you have a few layout directions?",
     time: "3:30 PM",
   },
   {
     id: "2",
     user: "Sam",
-    avatarColor: "bg-blue-600",
+    avatarColorId: "blue",
     text: "Yeah — think of it like duplicated frames. But live in the app.",
     time: "3:31 PM",
   },
@@ -22,14 +22,14 @@ const messages2: Message[] = [
   {
     id: "1",
     user: "Designer",
-    avatarColor: "bg-purple-600",
+    avatarColorId: "purple",
     text: "Do you have a few layout directions?",
     time: "3:30 PM",
   },
   {
     id: "2",
     user: "Sam",
-    avatarColor: "bg-blue-600",
+    avatarColorId: "blue",
     text: "Yeah — think of it like duplicated frames. But live in the app.",
     time: "3:31 PM",
   },
