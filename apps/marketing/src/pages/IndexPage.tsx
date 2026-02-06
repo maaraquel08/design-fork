@@ -9,6 +9,9 @@ import {
   DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
+import { FakeMessages } from "../components/FakeMessages";
+
+const headingClassName = "text-base font-semibold text-foreground tracking-tight";
 
 export function IndexPage() {
   const { theme, setTheme } = useTheme();
@@ -17,7 +20,7 @@ export function IndexPage() {
     <div className="min-h-screen p-8 pb-24">
       <div className="max-w-2xl mx-auto space-y-16">
         <header className="flex items-center justify-between">
-          <h1 className="text-sm font-medium text-muted-foreground">UIFork</h1>
+          <div />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -61,11 +64,19 @@ export function IndexPage() {
           </DropdownMenu>
         </header>
 
-        <div className="space-y-16">
-          <h1 className="text-4xl font-bold text-foreground">UIFork</h1>
+        <div className="space-y-16 text-sm">
+          <div className="flex flex-col gap-0">
+            <h1 className="text-xl font-semibold text-foreground tracking-tight">uifork</h1>
+            <p className="text-muted-foreground leading-relaxed">
+              Structured iteration for humans and agents.
+            </p>
+          </div>
+
+          {/* Fake messages */}
+          <FakeMessages />
 
           <section className="space-y-4">
-            <h2 className="text-2xl font-semibold text-foreground">The value of iteration</h2>
+            <h2 className={headingClassName}>The value of iteration</h2>
             <p className="text-muted-foreground leading-relaxed">
               I've heard people say that quality work often comes from large amounts of ideas.
               Putting in the effort and time to come up with as many ideas as possible is the
@@ -81,7 +92,7 @@ export function IndexPage() {
           </section>
 
           <section className="space-y-4">
-            <h2 className="text-2xl font-semibold text-foreground">The power of speed</h2>
+            <h2 className={headingClassName}>The power of speed</h2>
             <p className="text-muted-foreground leading-relaxed">
               In my design work, this is a big reason why I invested so heavily in learning keyboard
               shortcuts and using plugins to accelerate my workflow over the years. If I can be
@@ -134,7 +145,7 @@ export function IndexPage() {
           </section>
 
           <section className="space-y-4">
-            <h2 className="text-2xl font-semibold text-foreground">The woes of high fidelity</h2>
+            <h2 className={headingClassName}>The woes of high fidelity</h2>
             <p className="text-muted-foreground leading-relaxed">
               Figma is an incredible tool, but it has it's limits. Getting actual data into the
               design takes manual entry or plugins, interactivity and application states have to be
@@ -184,7 +195,7 @@ export function IndexPage() {
           </section>
 
           <section className="space-y-4">
-            <h2 className="text-2xl font-semibold text-foreground">Introducing UIFork</h2>
+            <h2 className={headingClassName}>Introducing UIFork</h2>
             <p className="text-lg font-medium text-foreground">
               Structured UI iteration for agents and humans.
             </p>
