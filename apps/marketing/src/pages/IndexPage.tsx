@@ -10,6 +10,7 @@ import {
 } from "../components/ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
 import FakeMessages from "../components/FakeMessages";
+import { CycleText } from "../components/CycleText";
 import { Container } from "../components/Container";
 
 const headingClassName = "text-base font-semibold text-foreground tracking-tight";
@@ -69,7 +70,7 @@ export function IndexPage() {
           <div className="flex flex-col gap-0">
             <h1 className="text-xl font-semibold text-foreground tracking-tight">uifork</h1>
             <p className="text-muted-foreground leading-relaxed">
-              Structured iteration for humans and agents.
+              <CycleText className="" /> iteration for humans and agents.
             </p>
           </div>
         </div>
