@@ -9,7 +9,8 @@ import {
   DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
-import { FakeMessages } from "../components/FakeMessages";
+import FakeMessages from "../components/FakeMessages";
+import { Container } from "../components/Container";
 
 const headingClassName = "text-base font-semibold text-foreground tracking-tight";
 
@@ -18,7 +19,7 @@ export function IndexPage() {
 
   return (
     <div className="min-h-screen p-8 pb-24">
-      <div className="max-w-2xl mx-auto space-y-16">
+      <Container className="space-y-16">
         <header className="flex items-center justify-between">
           <div />
           <DropdownMenu>
@@ -71,10 +72,16 @@ export function IndexPage() {
               Structured iteration for humans and agents.
             </p>
           </div>
+        </div>
+      </Container>
 
-          {/* Fake messages */}
-          <FakeMessages />
+      {/* Fake messages */}
+      <Container className="my-16">
+        <FakeMessages />
+      </Container>
 
+      <Container className="space-y-16">
+        <div className="space-y-16 text-sm">
           <section className="space-y-4">
             <h2 className={headingClassName}>The value of iteration</h2>
             <p className="text-muted-foreground leading-relaxed">
@@ -206,7 +213,7 @@ export function IndexPage() {
             </ul>
           </section>
         </div>
-      </div>
+      </Container>
     </div>
   );
 }
