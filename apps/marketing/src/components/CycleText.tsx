@@ -1,19 +1,24 @@
-import { type ReactNode, useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { ContentWheel, type ContentWheelProps } from "../components/ContentWheel"
 
 /**
  * Wrapper around the ContentWheel component that automatically cycles through
- * the items at a given interval.
+ * the items at a given interval. Items must be an array of strings.
  */
 
-const CyclingContentWheel = <T extends ReactNode>({
+type CycleTextProps = Omit<
+  ContentWheelProps<string>,
+  "activeIndex" | "renderItem"
+> & {
+  intervalMs?: number
+  pauseOnLastItem?: boolean
+}
+
+const CyclingContentWheel = ({
   intervalMs = 2000,
   pauseOnLastItem = false,
   ...props
-}: Omit<ContentWheelProps<T>, "activeIndex"> & {
-  intervalMs?: number
-  pauseOnLastItem?: boolean
-}) => {
+}: CycleTextProps) => {
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
   const [activeIndex, setActiveIndex] = useState(0)
   const [isPaused, setIsPaused] = useState(false)

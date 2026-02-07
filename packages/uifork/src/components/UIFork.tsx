@@ -422,7 +422,7 @@ export function UIFork({ port = 3001, className = "", style }: UIForkProps) {
         onDragEnd={handleDragEnd}
         animate={resetDrag ? { x: 0, y: 0 } : {}}
         style={{
-          borderRadius: isOpen ? 12 : 16,
+          borderRadius: isOpen ? 12 : 20,
           boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
           ...containerPosition,
           transformOrigin,
