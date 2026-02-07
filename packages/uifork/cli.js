@@ -12,7 +12,8 @@ function showHelp() {
 uifork - A CLI tool for managing UI component versions
 
 Usage:
-  uifork init <component-path>                    Initialize a new forked component
+  uifork <component-path>                         Initialize a new forked component (shorthand)
+  uifork init <component-path>                    Initialize a new forked component (explicit)
   uifork watch [directory]                        Watch for version changes (defaults to current directory)
   uifork new <component-path> [version-id]        Create a new version
   uifork fork <component-path> <version-id> [target-version]  Fork/duplicate a version
@@ -21,6 +22,7 @@ Usage:
   uifork promote <component-path> <version-id>   Promote a version to be the main component
 
 Examples:
+  uifork frontend/src/SomeDropdownComponent.tsx
   uifork init frontend/src/SomeDropdownComponent.tsx
   uifork watch
   uifork watch ./src
@@ -32,7 +34,7 @@ Examples:
   uifork promote SomeDropdownComponent v2
 
 Commands:
-  init      Convert a single component file into a versioned forked component
+  init      Convert a single component file into a versioned forked component (explicit form)
   watch     Start the watch server and discover all versioned components
   new       Create a new version (auto-increments if version-id not provided)
   fork      Fork/duplicate a version (auto-increments target if not provided)
@@ -61,6 +63,19 @@ const args = process.argv.slice(2);
 const command = args[0];
 const argument = args[1];
 
+// Known commands
+const knownCommands = [
+  "init",
+  "watch",
+  "new",
+  "fork",
+  "rename",
+  "delete",
+  "promote",
+  "duplicate",
+  "create",
+];
+
 // Handle help and version flags
 if (args.includes("-h") || args.includes("--help")) {
   showHelp();
@@ -72,12 +87,35 @@ if (args.includes("-v") || args.includes("--version")) {
   process.exit(0);
 }
 
+// If command is not a known command and exists, treat it as a component path (shorthand init)
+if (command && !knownCommands.includes(command)) {
+  // Treat command as component path and initialize
+  try {
+    const shouldWatch = args.includes("-w") || args.includes("--watch");
+    const scaffolder = new UISwitcherScaffold(command, shouldWatch);
+    scaffolder.scaffold();
+  } catch (error) {
+    console.error(`Error during scaffolding: ${error.message}`);
+    console.error(
+      "Usage: uifork <component-path> or uifork init <component-path>",
+    );
+    console.error(
+      "Example: uifork frontend/src/modules/chart-builder/ZoomDatePickerDropdown.tsx",
+    );
+    process.exit(1);
+  }
+  process.exit(0);
+}
+
 // Handle commands
 switch (command) {
   case "init":
     if (!argument) {
       console.error("Error: Component path is required for init command");
-      console.error("Usage: uifork init <component-path>");
+      console.error("Usage: uifork <component-path> or uifork init <component-path>");
+      console.error(
+        "Example: uifork frontend/src/modules/chart-builder/ZoomDatePickerDropdown.tsx",
+      );
       console.error(
         "Example: uifork init frontend/src/modules/chart-builder/ZoomDatePickerDropdown.tsx",
       );

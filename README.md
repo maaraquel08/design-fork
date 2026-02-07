@@ -68,6 +68,12 @@ function App() {
 **2. Initialize a component for versioning**
 
 ```bash
+npx uifork {path/to/component}
+```
+
+Or use the explicit form:
+
+```bash
 npx uifork init {path/to/component}
 ```
 
@@ -141,7 +147,7 @@ const showUIFork =
 
 **UIFork** — The floating widget. Switch versions, create/fork/rename/delete/promote, open in editor. Draggable; supports `Cmd/Ctrl + Arrow Up/Down` to cycle versions. Optional: `<UIFork port={3001} />` (default port 3001).
 
-**ForkedComponent** — The wrapper that renders the active version. `npx uifork init` generates this for you; you normally just import the component as before (e.g. `import Button from "./Button"`).
+**ForkedComponent** — The wrapper that renders the active version. `npx uifork <path>` generates this for you; you normally just import the component as before (e.g. `import Button from "./Button"`).
 
 ---
 
@@ -173,15 +179,21 @@ src/components/
 
 Use `npx uifork <command>`. All of these can also be done from the UIFork widget.
 
-### `init <component-path>`
+### Initialize a component (shorthand)
 
-Initialize versioning for a component.
+Initialize versioning for a component by passing the path directly.
+
+```bash
+npx uifork src/components/Dropdown.tsx
+```
+
+Or use the explicit form:
 
 ```bash
 npx uifork init src/components/Dropdown.tsx
 ```
 
-- **`-w`** — Start watch after init (default: off).
+- **`-w`** — Start watch after init (default: off). Works with both forms.
 
 ### `watch [directory]`
 

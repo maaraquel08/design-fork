@@ -93,6 +93,12 @@ No separate CSS import needed - styles are automatically included.
 ### 2. Initialize Component Versioning
 
 ```bash
+npx uifork src/components/Button.tsx
+```
+
+Or use the explicit form:
+
+```bash
 npx uifork init src/components/Button.tsx
 ```
 
@@ -100,7 +106,7 @@ This will:
 
 - Convert the component into a forked component that can be versioned
 - Generate a `versions.ts` file to track all versions
-- Optionally start the watch server (use `-w` flag)
+- Optionally start the watch server (use `-w` flag with either form)
 
 ### 3. Use Component Normally
 
@@ -115,9 +121,16 @@ import Button from "./components/Button";
 
 All commands use `npx uifork`:
 
-### `init <component-path>`
+### Initialize a component (shorthand)
 
-Initialize versioning for an existing component.
+Initialize versioning for an existing component by passing the path directly.
+
+```bash
+npx uifork src/components/Dropdown.tsx
+npx uifork src/components/Dropdown.tsx -w  # Start watching after init
+```
+
+Or use the explicit form:
 
 ```bash
 npx uifork init src/components/Dropdown.tsx
@@ -185,7 +198,7 @@ This will:
 
 ## File Structure
 
-After running `npx uifork init src/components/Button.tsx`:
+After running `npx uifork src/components/Button.tsx` (or `npx uifork init src/components/Button.tsx`):
 
 ```
 src/components/
@@ -241,7 +254,7 @@ Useful for:
 
 1. Install uifork: `npm install uifork`
 2. Add `<UIFork />` component to app root
-3. Initialize: `npx uifork init src/components/MyComponent.tsx`
+3. Initialize: `npx uifork src/components/MyComponent.tsx` (or `npx uifork init src/components/MyComponent.tsx`)
 4. Start watch server: `npx uifork watch`
 5. Use the widget to create and switch between versions
 
