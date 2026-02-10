@@ -146,9 +146,13 @@ npx uifork init src/components/Dropdown.tsx -w  # Start watching after init
 Start the watch server (enables UI widget communication).
 
 ```bash
-npx uifork watch              # Watch current directory
-npx uifork watch ./src        # Watch specific directory
+npx uifork watch                    # Watch current directory (port 3001)
+npx uifork watch ./src              # Watch specific directory
+npx uifork watch --port 3002        # Custom port
+npx uifork watch ./src --port 3002  # Directory + custom port
 ```
+
+When using a custom port, pass the same port to the UIFork component: `<UIFork port={3002} />`.
 
 **Important:** After generating new version files (e.g., manually or via AI agents), run the watch command to regenerate the corresponding `versions.ts` files.
 

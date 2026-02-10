@@ -14,7 +14,7 @@ uifork - A CLI tool for managing UI component versions
 Usage:
   uifork <component-path>                         Initialize a new forked component (shorthand)
   uifork init <component-path>                    Initialize a new forked component (explicit)
-  uifork watch [directory]                        Watch for version changes (defaults to current directory)
+  uifork watch [directory] [--port <port>]         Watch for version changes (defaults to current directory)
   uifork new <component-path> [version-id]        Create a new version
   uifork fork <component-path> <version-id> [target-version]  Fork/duplicate a version
   uifork rename <component-path> <version-id> <new-version-id>  Rename a version
@@ -26,6 +26,8 @@ Examples:
   uifork init frontend/src/SomeDropdownComponent.tsx
   uifork watch
   uifork watch ./src
+  uifork watch --port 3002
+  uifork watch ./src --port 3002
   uifork new SomeDropdownComponent
   uifork new SomeDropdownComponent v3
   uifork fork SomeDropdownComponent v1 v2
@@ -49,6 +51,7 @@ Options:
   -h, --help     Show this help message
   -v, --version  Show version number
   -w             Start watching after init (init command only)
+  --port <port>  Port for the watch server (default: 3001); also respects PORT env var
   --lazy         Use lazy loading for component versions (watch command only)
 `);
 }
@@ -136,12 +139,25 @@ switch (command) {
     // Watch can be called without arguments - defaults to current directory
     // Parse --lazy flag
     const lazyMode = args.includes("--lazy");
+    // Parse --port flag
+    const portIndex = args.indexOf("--port");
+    const watchPort =
+      portIndex !== -1 && args[portIndex + 1]
+        ? parseInt(args[portIndex + 1], 10)
+        : undefined;
     // Filter out flags to get the actual directory argument
     const watchDir = args.find(
-      (arg, index) => index > 0 && !arg.startsWith("--") && arg !== "watch",
+      (arg, index) =>
+        index > 0 &&
+        !arg.startsWith("--") &&
+        arg !== "watch" &&
+        (index !== portIndex + 1 || isNaN(parseInt(arg, 10))),
     );
     try {
-      new VersionSync(watchDir || process.cwd(), { lazy: lazyMode });
+      new VersionSync(watchDir || process.cwd(), {
+        lazy: lazyMode,
+        ...(watchPort && !isNaN(watchPort) ? { port: watchPort } : {}),
+      });
     } catch (error) {
       console.error(`Error during watching: ${error.message}`);
       process.exit(1);

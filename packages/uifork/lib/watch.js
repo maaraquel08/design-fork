@@ -463,6 +463,7 @@ class VersionSync {
     this.server = null;
     this.wss = null;
     this.lazy = options.lazy || false;
+    this.port = options.port ?? process.env.PORT ?? 3001;
 
     // Discover all components
     this.discoverComponents();
@@ -541,7 +542,7 @@ class VersionSync {
 
   startServer() {
     const app = express();
-    const port = process.env.PORT || 3001;
+    const port = this.port;
 
     app.use(cors());
     app.use(express.json());
