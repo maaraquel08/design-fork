@@ -2,72 +2,43 @@ import { ForkIcon } from "./icons/ForkIcon";
 import { ANIMATION_DURATION, ANIMATION_EASING } from "./constants";
 import styles from "./UIFork.module.css";
 import { motion } from "motion/react";
-import { ConnectionStatus } from "../hooks/useWebSocketConnection";
-import { ActiveView } from "./types";
 
 type TriggerContentProps = {
-  activeView: ActiveView;
-  connectionStatus: ConnectionStatus;
+  hasSelection: boolean;
   selectedComponent: string;
   activeVersion: string;
   activeVersionLabel?: string;
   formatVersionLabel: (version: string) => string;
-  isConnected: boolean;
 };
 
 const TriggerContent = ({
-  activeView,
-  connectionStatus,
+  hasSelection,
   selectedComponent,
   activeVersion,
   activeVersionLabel,
   formatVersionLabel,
-  isConnected,
 }: TriggerContentProps) => {
-  // Display the custom label if available, otherwise format the version key
   const displayVersion = activeVersionLabel || (activeVersion ? formatVersionLabel(activeVersion) : "-");
+
+  if (!hasSelection) {
+    return <ForkIcon className={styles.triggerIcon} />;
+  }
+
   return (
     <>
-      {activeView === "closed-trigger-icon" ? (
-        // Icon-only state: error, connecting, or no components
-        <>
-          {connectionStatus === "disconnected" || connectionStatus === "failed" ? (
-            <div className={styles.triggerIconContainer}>
-              <ForkIcon className={`${styles.triggerIcon} ${styles.triggerIconOffline}`} />
-              <div className={styles.connectionErrorDot} title="Disconnected from watch server" />
-            </div>
-          ) : (
-            <>
-              {connectionStatus === "connecting" && (
-                <div
-                  className={`${styles.statusIndicator} ${styles.statusIndicatorConnecting}`}
-                  title="Connecting..."
-                />
-              )}
-              <ForkIcon className={styles.triggerIcon} />
-            </>
-          )}
-        </>
-      ) : (
-        // Icon+label state: connected with components
-        <>
-          <ForkIcon className={`${styles.triggerIcon} ${isConnected ? styles.triggerIconOnline : styles.triggerIconOffline}`} />
-          <motion.span
-            layoutId="component-name"
-            layout="position"
-            className={styles.triggerLabel}
-            transition={{
-              duration: ANIMATION_DURATION,
-              ease: ANIMATION_EASING,
-            }}
-          >
-            {selectedComponent || "No component"}
-          </motion.span>
-          <span className={styles.triggerVersion}>
-            {displayVersion}
-          </span>
-        </>
-      )}
+      <ForkIcon className={styles.triggerIcon} />
+      <motion.span
+        layoutId="component-name"
+        layout="position"
+        className={styles.triggerLabel}
+        transition={{
+          duration: ANIMATION_DURATION,
+          ease: ANIMATION_EASING,
+        }}
+      >
+        {selectedComponent}
+      </motion.span>
+      <span className={styles.triggerVersion}>{displayVersion}</span>
     </>
   );
 };

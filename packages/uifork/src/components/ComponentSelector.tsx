@@ -101,23 +101,25 @@ export function ComponentSelectorDropdown({
       {mountedComponents.length === 0 ? (
         <div className={styles.emptyState}>No mounted components found</div>
       ) : (
-        mountedComponents.map((component) => (
-          <button
-            key={component.name}
-            onClick={() => onSelect(component.name)}
-            className={`${styles.componentSelectorItem} ${styles.menuItem} ${
-              component.name === selectedComponent ? styles.componentSelectorItemSelected : ""
-            }`}
-          >
-            <div className={styles.componentSelectorItemCheckmarkContainer}>
-              {component.name === selectedComponent && (
-                <CheckmarkIcon className={styles.componentSelectorItemCheckmark} />
-              )}
-            </div>
-            <span className={styles.componentSelectorItemName}>{component.name}</span>
-            <span className={styles.componentSelectorItemCount}>{component.versions.length}</span>
-          </button>
-        ))
+        <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+          {mountedComponents.map((component) => (
+            <button
+              key={component.name}
+              onClick={() => onSelect(component.name)}
+              className={`${styles.componentSelectorItem} ${styles.menuItem} ${
+                component.name === selectedComponent ? styles.componentSelectorItemSelected : ""
+              }`}
+            >
+              <div className={styles.componentSelectorItemCheckmarkContainer}>
+                {component.name === selectedComponent && (
+                  <CheckmarkIcon className={styles.componentSelectorItemCheckmark} />
+                )}
+              </div>
+              <span className={styles.componentSelectorItemName}>{component.name}</span>
+              <span className={styles.componentSelectorItemCount}>{component.versions.length}</span>
+            </button>
+          ))}
+        </div>
       )}
       {isConnected && (
         <div className={styles.componentSelectorDropdownHint}>

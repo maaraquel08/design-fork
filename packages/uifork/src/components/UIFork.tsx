@@ -464,7 +464,7 @@ export function UIFork({ port = 3001, className = "", style }: UIForkProps) {
               aria-expanded={false}
               aria-haspopup="listbox"
               className={`${styles.trigger} ${
-                activeView === "closed-trigger-icon" ? styles.triggerIconOnly : ""
+                !selectedComponent || versions.length === 0 ? styles.triggerIconOnly : ""
               }`}
               layout
               initial={{ opacity: 0 }}
@@ -477,13 +477,11 @@ export function UIFork({ port = 3001, className = "", style }: UIForkProps) {
               draggable={false}
             >
               <TriggerContent
-                activeView={activeView}
-                connectionStatus={connectionStatus}
+                hasSelection={!!selectedComponent && versions.length > 0}
                 selectedComponent={selectedComponent}
                 activeVersion={activeVersion}
                 activeVersionLabel={getVersionLabel(activeVersion)}
                 formatVersionLabel={formatVersionLabel}
-                isConnected={isConnected}
               />
             </motion.button>
           ) : (

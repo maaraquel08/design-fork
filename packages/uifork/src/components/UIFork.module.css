@@ -193,14 +193,6 @@
   color: var(--uifork-fg-secondary);
 }
 
-/* Trigger icon container */
-.triggerIconContainer {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 /* Trigger icon */
 .triggerIcon {
   width: 16px;
@@ -213,24 +205,6 @@
 }
 .triggerIcon.triggerIconOpen {
   transform: rotate(180deg);
-}
-.triggerIcon.triggerIconOnline {
-  color: #22c55e; /* green-500 */
-}
-.triggerIcon.triggerIconOffline {
-  color: var(--uifork-fg-secondary);
-}
-/* Connection error dot (red dot in bottom right of fork icon) */
-.connectionErrorDot {
-  position: absolute;
-  bottom: -2px;
-  right: -2px;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: var(--uifork-status-disconnected);
-  border: 2px solid var(--uifork-bg-dark);
-  box-sizing: border-box;
 }
 
 /* Dropdown content */
@@ -363,7 +337,8 @@
   color: var(--uifork-fg-secondary);
   margin: 0;
   line-height: 1.4;
-  max-width: 200px;
+  max-width: 220px;
+  text-wrap: balance;
 }
 
 .inlineCode {
