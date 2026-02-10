@@ -7,11 +7,14 @@ import { COMPONENT_VERSION_STORAGE_PREFIX } from "./constants";
 import type { ForkedComponentProps } from "../types";
 
 /**
- * A component2 that renders a specific version based on localStorage state.
+ * A component that renders a specific version based on localStorage state.
  * Used to wrap components that have multiple versions managed by uifork.
  *
  * The UIFork component controls which version is active by writing to localStorage.
  * ForkedComponent reads from localStorage and renders the appropriate version.
+ *
+ * For now, each version file must default-export its component. Named exports are
+ * being considered for the future.
  */
 export function ForkedComponent<T extends Record<string, unknown>>({
   id,

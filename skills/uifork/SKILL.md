@@ -108,6 +108,10 @@ This will:
 - Generate a `versions.ts` file to track all versions
 - Optionally start the watch server (use `-w` flag with either form)
 
+**Requirement:** For now, each version file must default-export its component. Named exports are being considered for the future.
+
+**When the target file lacks a default export:** Prompt the user to update the component to use a default export, then update any files that import it (e.g., change `import { Foo }` to `import Foo`). Only run `npx uifork init` after the component has a default export.
+
 ### 3. Use Component Normally
 
 ```tsx
@@ -208,6 +212,8 @@ src/components/
 ├── Button.v2.tsx           # Additional versions
 └── Button.v1_1.tsx         # Sub-versions (v1.1, v2.1, etc.)
 ```
+
+For now, each version file must default-export its component. Named exports are being considered for the future.
 
 ## Version Naming
 

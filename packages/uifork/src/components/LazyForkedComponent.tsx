@@ -10,6 +10,9 @@ import type { ForkedComponentProps } from "../types";
  *
  * The UIFork component controls which version is active by writing to localStorage.
  * ForkedComponent reads from localStorage and renders the appropriate version.
+ *
+ * For now, each version file must default-export its component. Named exports are
+ * being considered for the future.
  */
 export function LazyForkedComponent<T extends Record<string, unknown>>({
   id,

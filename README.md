@@ -86,6 +86,9 @@ This will:
 - Convert your component into a forked component that can be versioned
 - Generate a `versions.ts` file to track all versions
 
+**Note:** For now, each version file must default-export its component. Named exports are
+being considered for the future.
+
 **3. Use your component as usual**
 
 ```tsx
@@ -239,6 +242,7 @@ npx uifork init src/components/Dropdown.tsx
 ```
 
 - **`-w`** — Start watch after init (default: off). Works with both forms.
+- **Requirement:** For now, each version file must default-export its component. Named exports are being considered for the future.
 
 ### `watch [directory]`
 

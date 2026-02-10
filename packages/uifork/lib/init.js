@@ -89,6 +89,8 @@ export { VERSIONS }
     this.createWrapper();
 
     console.log("\n✅ Scaffolding complete!");
+    console.log("\nFor now, each version file must default-export its component.");
+    console.log("   Named exports are something we're considering for the future.");
     console.log("\nNext steps:");
     console.log(
       `1. Your original component is now ${this.componentName}.v1${this.originalExtension}`,
