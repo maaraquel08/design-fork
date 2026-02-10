@@ -2,7 +2,7 @@
 
 UIFork is a dev tool for exploring UI ideas directly inside your React app.
 
-- **Instant switching:** Flip between variations quickly. No reloads, no flow interrupting your flow.
+- **Instant switching:** Flip between variations quickly. No reloads, no interrupting your flow.
 
 - **In-context comparison:** Same app, state, props, and edge cases.
 
