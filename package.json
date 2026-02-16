@@ -29,6 +29,10 @@
     "marketing:full": "turbo run dev --filter=uifork --filter=marketing",
     "marketing:watch": "cd apps/marketing && npm run watch",
     "dev:uifork": "turbo run dev --filter=uifork",
+    "dev:uifork-vue": "turbo run dev --filter=uifork-vue",
+    "sandbox-vue": "turbo run dev --filter=sandbox-vue",
+    "sandbox-vue:full": "turbo run dev --filter=uifork-vue --filter=sandbox-vue",
+    "sandbox-vue:watch": "cd apps/sandbox-vue && npm run watch",
     "test": "turbo run test",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
@@ -40,5 +44,8 @@
     "oxlint": "^1.42.0",
     "turbo": "^2.8.0"
   },
-  "packageManager": "npm@10.9.0"
+  "packageManager": "npm@10.9.0",
+  "dependencies": {
+    "uifork": "^0.0.10"
+  }
 }

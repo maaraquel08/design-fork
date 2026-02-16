@@ -3,6 +3,7 @@ import styles from "./UIFork.module.css";
 import { VersionItem } from "./VersionItem";
 import { VersionNameEditor } from "./VersionNameEditor";
 import type { VersionInfo } from "../types";
+import { isDevelopment } from "../utils/environment";
 
 interface VersionsListProps {
   versions: VersionInfo[];
@@ -87,6 +88,7 @@ export function VersionsList({
               popoverPosition={popoverPositions.get(key)}
               isPopoverOpen={openPopoverVersion === key}
               isConnected={isConnected}
+              isDevelopment={isDevelopment()}
               onSelect={onSelectVersion}
               onDuplicate={onDuplicateVersion}
               onTogglePopover={onTogglePopover}

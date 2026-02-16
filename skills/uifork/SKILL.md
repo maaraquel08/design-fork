@@ -1,28 +1,32 @@
 ---
 name: uifork
-description: Install and work with uifork, a CLI tool and React component library for managing UI component versions. Use when the user wants to version components, test UI variations, gather stakeholder feedback, or work with uifork commands like init, watch, new, fork, promote.
+description: Install and work with uifork, a CLI tool and component library for managing UI component versions. Supports React (uifork) and Vue 3 (uifork-vue). Use when the user wants to version components, test UI variations, gather stakeholder feedback, or work with uifork commands like init, watch, new, fork, promote.
 ---
 
 # UIFork
 
-UIFork is a CLI tool and React component library for managing UI component versions. Create multiple versions of components, let stakeholders switch between them to test and gather feedback, and promote the best one when ready.
+UIFork is a CLI tool and component library for managing UI component versions. Available for **React** (`uifork`) and **Vue 3** (`uifork-vue`). Create multiple versions of components, let stakeholders switch between them to test and gather feedback, and promote the best one when ready.
 
 ## When to Use
 
-- User wants to version React components for A/B testing or stakeholder feedback
+- User wants to version React or Vue components for A/B testing or stakeholder feedback
 - User mentions uifork, component versioning, or UI variations
 - User needs help with uifork CLI commands (init, watch, new, fork, promote, etc.)
-- User wants to set up uifork in a React app (Vite, Next.js, etc.)
+- User wants to set up uifork in a React app (Vite, Next.js) or Vue app (Vite, Nuxt)
 
 ## Installation
 
 ```bash
+# React
 npm install uifork
+
+# Vue 3
+npm install uifork-vue
 ```
 
 Or use yarn, pnpm, or bun.
 
-## Quick Setup
+## Quick Setup — React
 
 ### 1. Add UIFork Component
 
@@ -121,24 +125,101 @@ import Button from "./components/Button";
 <Button onClick={handleClick}>Click me</Button>;
 ```
 
+## Quick Setup — Vue 3
+
+### 1. Add UIFork Component
+
+Add the `UIFork` component to your Vue app root. Typically shown in development only:
+
+**Vite + Vue:**
+
+```vue
+<!-- App.vue -->
+<script setup>
+import { UIFork } from "uifork-vue"
+
+const isDev = import.meta.env.DEV
+</script>
+
+<template>
+  <YourApp />
+  <UIFork v-if="isDev" />
+</template>
+```
+
+**Nuxt 3:**
+
+```vue
+<!-- app.vue -->
+<script setup>
+import { UIFork } from "uifork-vue"
+
+const isDev = import.meta.env.DEV
+</script>
+
+<template>
+  <NuxtLayout>
+    <NuxtPage />
+  </NuxtLayout>
+  <UIFork v-if="isDev" />
+</template>
+```
+
+No separate CSS import needed - styles are automatically included.
+
+### 2. Initialize Component Versioning
+
+```bash
+npx uifork-vue src/components/ContactCard.vue
+```
+
+Or use the explicit form:
+
+```bash
+npx uifork-vue init src/components/ContactCard.vue
+```
+
+This will:
+
+- Move the component to `ContactCard.v1.vue`
+- Generate a `ContactCard.versions.ts` file to track all versions
+- Create a `ContactCard.vue` wrapper that dynamically renders the active version
+- Optionally start the watch server (use `-w` flag)
+
+**Requirement:** Each version file must default-export its component.
+
+### 3. Use Component Normally
+
+```vue
+<script setup>
+import ContactCard from "./components/ContactCard.vue"
+</script>
+
+<template>
+  <!-- Works exactly as before — active version controlled by UIFork widget -->
+  <ContactCard />
+</template>
+```
+
 ## CLI Commands
 
-All commands use `npx uifork`:
+Use `npx uifork` for React or `npx uifork-vue` for Vue. Commands are the same for both. Examples below use `uifork` — replace with `uifork-vue` and `.vue` extensions for Vue projects.
 
 ### Initialize a component (shorthand)
 
 Initialize versioning for an existing component by passing the path directly.
 
 ```bash
-npx uifork src/components/Dropdown.tsx
-npx uifork src/components/Dropdown.tsx -w  # Start watching after init
+npx uifork src/components/Dropdown.tsx          # React
+npx uifork-vue src/components/Dropdown.vue      # Vue
+npx uifork src/components/Dropdown.tsx -w        # Start watching after init
 ```
 
 Or use the explicit form:
 
 ```bash
 npx uifork init src/components/Dropdown.tsx
-npx uifork init src/components/Dropdown.tsx -w  # Start watching after init
+npx uifork-vue init src/components/Dropdown.vue
 ```
 
 ### `watch [directory]`
@@ -152,7 +233,9 @@ npx uifork watch --port 3002        # Custom port
 npx uifork watch ./src --port 3002  # Directory + custom port
 ```
 
-When using a custom port, pass the same port to the UIFork component: `<UIFork port={3002} />`.
+When using a custom port, pass the same port to the UIFork component:
+- React: `<UIFork port={3002} />`
+- Vue: `<UIFork :port="3002" />`
 
 **Important:** After generating new version files (e.g., manually or via AI agents), run the watch command to regenerate the corresponding `versions.ts` files.
 
@@ -201,14 +284,14 @@ npx uifork promote Button v2
 
 This will:
 
-- Replace `Button.tsx` with content from `Button.v2.tsx`
-- Delete all version files (`Button.v*.tsx`)
-- Delete `Button.versions.ts`
+- Replace the wrapper with the promoted version's content
+- Delete all version files
+- Delete the `versions.ts` file
 - Effectively "undo" the versioning system
 
 ## File Structure
 
-After running `npx uifork src/components/Button.tsx` (or `npx uifork init src/components/Button.tsx`):
+**React** (after `npx uifork src/components/Button.tsx`):
 
 ```
 src/components/
@@ -219,7 +302,18 @@ src/components/
 └── Button.v1_1.tsx         # Sub-versions (v1.1, v2.1, etc.)
 ```
 
-For now, each version file must default-export its component. Named exports are being considered for the future.
+**Vue** (after `npx uifork-vue src/components/ContactCard.vue`):
+
+```
+src/components/
+├── ContactCard.vue           # Wrapper component (import this)
+├── ContactCard.versions.ts   # Version configuration
+├── ContactCard.v1.vue        # Original component (version 1)
+├── ContactCard.v2.vue        # Additional versions
+└── ContactCard.v1_1.vue      # Sub-versions (v1.1, v1.2, etc.)
+```
+
+Each version file must default-export its component.
 
 ## Version Naming
 
@@ -247,11 +341,22 @@ The `UIFork` component provides a floating UI widget that allows:
 
 For more control over when UIFork appears:
 
+**React:**
 ```tsx
-// Enable via NEXT_PUBLIC_ENABLE_UIFORK=true or VITE_ENABLE_UIFORK=true
 const showUIFork =
   process.env.NODE_ENV !== "production" ||
   process.env.NEXT_PUBLIC_ENABLE_UIFORK === "true";
+```
+
+**Vue:**
+```vue
+<script setup>
+const showUIFork = import.meta.env.DEV || import.meta.env.VITE_ENABLE_UIFORK === "true"
+</script>
+
+<template>
+  <UIFork v-if="showUIFork" />
+</template>
 ```
 
 Useful for:
@@ -264,10 +369,18 @@ Useful for:
 
 ### Starting Versioning on a Component
 
-1. Install uifork: `npm install uifork`
-2. Add `<UIFork />` component to app root
-3. Initialize: `npx uifork src/components/MyComponent.tsx` (or `npx uifork init src/components/MyComponent.tsx`)
+**React:**
+1. Install: `npm install uifork`
+2. Add `<UIFork />` to app root
+3. Initialize: `npx uifork src/components/MyComponent.tsx`
 4. Start watch server: `npx uifork watch`
+5. Use the widget to create and switch between versions
+
+**Vue:**
+1. Install: `npm install uifork-vue`
+2. Add `<UIFork v-if="isDev" />` to app root
+3. Initialize: `npx uifork-vue src/components/MyComponent.vue`
+4. Start watch server: `npx uifork-vue watch`
 5. Use the widget to create and switch between versions
 
 ### Creating a New Version
@@ -295,4 +408,4 @@ This removes all versioning and makes v2 the main component.
 3. Selecting a version updates localStorage, triggering `ForkedComponent` to re-render
 4. Watch server monitors file system for new version files and updates `versions.ts` automatically
 
-**After generating new version files:** When creating version files manually or via AI agents, run `npx uifork watch` to regenerate the `versions.ts` files so the new versions appear in the UIFork widget.
+**After generating new version files:** When creating version files manually or via AI agents, run `npx uifork watch` (or `npx uifork-vue watch`) to regenerate the `versions.ts` files so the new versions appear in the UIFork widget.

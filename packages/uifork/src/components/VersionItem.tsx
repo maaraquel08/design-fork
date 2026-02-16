@@ -14,6 +14,7 @@ interface VersionItemProps {
   popoverPosition: { x: number; y: number } | undefined;
   isPopoverOpen: boolean;
   isConnected: boolean;
+  isDevelopment: boolean;
   onSelect: (version: string) => void;
   onDuplicate: (version: string, e: React.MouseEvent) => void;
   onTogglePopover: (version: string, e?: React.MouseEvent) => void;
@@ -33,6 +34,7 @@ export function VersionItem({
   popoverPosition,
   isPopoverOpen,
   isConnected,
+  isDevelopment,
   onSelect,
   onDuplicate,
   onTogglePopover,
@@ -61,16 +63,16 @@ export function VersionItem({
         <span className={styles.versionId}>{formattedVersion}</span>
         {label && <span className={styles.versionLabelText}>{label}</span>}
       </div>
-      {/* Action buttons - only show when connected */}
-      {isConnected && (
-        <div data-actions className={styles.actions} onClick={(e) => e.stopPropagation()}>
+      {/* Action buttons - show in dev, disable when disconnected */}
+      {isDevelopment && (
+        <div data-actions className={`${styles.actions} ${!isConnected ? styles.disabled : ""}`} onClick={(e) => e.stopPropagation()}>
           <Tooltip label="Fork version" placement="top">
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                onDuplicate(version, e);
+                if (isConnected) onDuplicate(version, e);
               }}
-              className={styles.actionButton}
+              className={`${styles.actionButton} ${!isConnected ? styles.disabled : ""}`}
             >
               <GitForkIcon className={styles.actionIcon} />
             </button>

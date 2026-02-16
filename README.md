@@ -1,6 +1,6 @@
 # uifork
 
-UIFork is a dev tool for exploring UI ideas directly inside your React app.
+UIFork is a dev tool for exploring UI ideas directly inside your app. Available for **React** and **Vue 3**.
 
 - **Instant switching:** Flip between variations quickly. No reloads, no interrupting your flow.
 
@@ -16,16 +16,18 @@ UIFork is a dev tool for exploring UI ideas directly inside your React app.
 
 ## Getting started
 
-Install the package:
+Pick your framework:
 
-```tsx
-npm install uifork
-```
+| | Package | Install |
+|---|---------|---------|
+| React | `uifork` | `npm install uifork` |
+| Vue 3 | `uifork-vue` | `npm install uifork-vue` |
 
 Continue installation:
 
 - [Using agents & skills](#using-agents--skills)
-- [Manually](#manual-install)
+- [Manually — React](#manual-install-react)
+- [Manually — Vue 3](#manual-install-vue)
 
 ### Using agents & skills
 
@@ -41,7 +43,7 @@ npx skills add sambernhardt/uifork
 # Prompt
 Add uifork to this application
 
-# Or if the skill isn’t picked up:
+# Or if the skill isn't picked up:
 /uifork add to this application
 ```
 
@@ -52,11 +54,11 @@ Add uifork to this application
 Fork a version of {some component} and make the following changes
 ```
 
-### Manual install
+### Manual install (React)
 
 Note: even if installing manually, the [agent skill](#using-agents--skills) is still helpful for a better AI experience.
 
-**2. Add UIFork to your project**
+**1. Add UIFork to your project**
 
 Add the component anywhere in your React app, ideally at the root level. For framework-specific examples, see the [framework examples](#framework-examples) below.
 
@@ -96,6 +98,53 @@ import Button from "./components/Button";
 
 // Works exactly as before - the active version is controlled by the UIFork widget
 <Button onClick={handleClick}>Click me</Button>;
+```
+
+### Manual install (Vue 3)
+
+**1. Add UIFork to your project**
+
+Add the component anywhere in your Vue app, ideally at the root level. For Nuxt, see the [framework examples](#framework-examples) below.
+
+```vue
+<!-- App.vue -->
+<script setup>
+import { UIFork } from "uifork-vue"
+
+const isDev = import.meta.env.DEV
+</script>
+
+<template>
+  <YourApp />
+  <UIFork v-if="isDev" />
+</template>
+```
+
+**2. Initialize a component for versioning**
+
+```bash
+npx uifork-vue {path/to/component}
+```
+
+This will:
+
+- Move your component to `ComponentName.v1.vue`
+- Generate a `ComponentName.versions.ts` file to track all versions
+- Create a `ComponentName.vue` wrapper that dynamically renders the active version
+
+**Note:** Each version file must default-export its component.
+
+**3. Use your component as usual**
+
+```vue
+<script setup>
+import ContactCard from "./components/ContactCard.vue"
+</script>
+
+<template>
+  <!-- Works exactly as before — the active version is controlled by the UIFork widget -->
+  <ContactCard />
+</template>
 ```
 
 ### Using the versioning UI
@@ -138,9 +187,10 @@ UIFork uses file-based component versioning and runtime hot-swapping to enable s
 Each UI variation is a real file on disk:
 
 ```
-Button.v1.tsx
-Button.v2.tsx
-Button.v3.tsx
+# React                    # Vue
+Button.v1.tsx              ContactCard.v1.vue
+Button.v2.tsx              ContactCard.v2.vue
+Button.v3.tsx              ContactCard.v3.vue
 ```
 
 This enables:
@@ -155,12 +205,16 @@ This enables:
 When you initialize a component:
 
 ```bash
+# React
 npx uifork init Button.tsx
+
+# Vue
+npx uifork-vue init ContactCard.vue
 ```
 
 UIFork converts it into a wrapper that dynamically renders the active version.
 
-Example:
+**React example:**
 
 ```tsx
 // Button.tsx (generated wrapper)
@@ -170,6 +224,20 @@ export default function Button(props) {
   const Version = getActiveVersion();
   return <Version {...props} />;
 }
+```
+
+**Vue example:**
+
+```vue
+<!-- ContactCard.vue (generated wrapper) -->
+<script setup lang="ts">
+import { ForkedComponent } from "uifork-vue"
+import { VERSIONS } from "./ContactCard.versions"
+</script>
+
+<template>
+  <ForkedComponent id="ContactCard" :versions="VERSIONS" v-bind="$attrs" />
+</template>
 ```
 
 The wrapper:
@@ -230,6 +298,7 @@ You’re left with a single component file which can be a clean diff from the or
 
 ## File structure (after init)
 
+**React:**
 ```
 src/components/
 ├── Button.tsx           # Wrapper (import this)
@@ -239,26 +308,40 @@ src/components/
 └── Button.v1_1.tsx      # Sub-versions (v1.1, etc.)
 ```
 
+**Vue:**
+```
+src/components/
+├── ContactCard.vue           # Wrapper (import this)
+├── ContactCard.versions.ts   # Version config
+├── ContactCard.v1.vue        # Original
+├── ContactCard.v2.vue        # More versions
+└── ContactCard.v1_1.vue      # Sub-versions (v1.1, etc.)
+```
+
 **Version IDs:** `v1`, `v2`, `v3` = major; `v1_1`, `v1_2` = sub (shown as V1.1, V1.2 in the UI).
 
 ---
 
 ## CLI reference
 
-Use `npx uifork <command>`. All of these can also be done from the UIFork widget.
+Use `npx uifork <command>` (React) or `npx uifork-vue <command>` (Vue). All of these can also be done from the UIFork widget.
+
+The CLI commands are the same for both frameworks. Examples below use `uifork` — replace with `uifork-vue` and `.vue` extensions for Vue projects.
 
 ### Initialize a component (shorthand)
 
 Initialize versioning for a component by passing the path directly.
 
 ```bash
-npx uifork src/components/Dropdown.tsx
+npx uifork src/components/Dropdown.tsx        # React
+npx uifork-vue src/components/Dropdown.vue    # Vue
 ```
 
 Or use the explicit form:
 
 ```bash
 npx uifork init src/components/Dropdown.tsx
+npx uifork-vue init src/components/Dropdown.vue
 ```
 
 - **`-w`** — Start watch after init (default: off). Works with both forms.
@@ -276,6 +359,7 @@ npx uifork watch ./src --port 3002  # directory + custom port
 ```
 
 - **`--port <port>`** — Port for the watch server (default: 3030). Also respects the `PORT` environment variable.
+- **`--lazy`** — Use lazy loading for component versions (Vue only).
 
 ### `new <component-path> [version-id]`
 
@@ -321,7 +405,7 @@ npx uifork promote Button v2
 
 - Replaces `Button.tsx` with the content of `Button.v2.tsx`
 - Deletes all `Button.v*.tsx` and `Button.versions.ts`
-- You’re left with a single `Button.tsx`
+- You're left with a single `Button.tsx`
 
 ---
 
@@ -345,7 +429,7 @@ Not intended for:
 
 ## Framework examples
 
-### Vite
+### React — Vite
 
 ```tsx
 // src/App.tsx
@@ -363,7 +447,7 @@ function App() {
 }
 ```
 
-### Next.js (App Router)
+### React — Next.js (App Router)
 
 ```tsx
 // components/UIForkProvider.tsx
@@ -377,7 +461,7 @@ export function UIForkProvider() {
 // app/layout.tsx — add <UIForkProvider /> inside <body>
 ```
 
-### Next.js (Pages Router)
+### React — Next.js (Pages Router)
 
 ```tsx
 // pages/_app.tsx
@@ -391,6 +475,40 @@ export default function App({ Component, pageProps }) {
     </>
   );
 }
+```
+
+### Vue 3 — Vite
+
+```vue
+<!-- src/App.vue -->
+<script setup>
+import { UIFork } from "uifork-vue"
+
+const isDev = import.meta.env.DEV
+</script>
+
+<template>
+  <YourApp />
+  <UIFork v-if="isDev" />
+</template>
+```
+
+### Vue 3 — Nuxt 3
+
+```vue
+<!-- app.vue -->
+<script setup>
+import { UIFork } from "uifork-vue"
+
+const isDev = import.meta.env.DEV
+</script>
+
+<template>
+  <NuxtLayout>
+    <NuxtPage />
+  </NuxtLayout>
+  <UIFork v-if="isDev" />
+</template>
 ```
 
 ---
