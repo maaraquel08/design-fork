@@ -68,9 +68,5 @@
     "oxlint": "^1.42.0",
     "turbo": "^2.8.0"
   },
-  "packageManager": "npm@10.9.0",
-  "dependencies": {
-    "uifork": "^0.0.10",
-    "uifork-vue": "^0.0.1"
-  }
+  "packageManager": "npm@10.9.0"
 }
