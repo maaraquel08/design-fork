@@ -1,0 +1,12 @@
+# Override .gitignore for npm install from git
+# We need dist/ to be included for consumers
+.DS_Store
+node_modules
+.turbo
+.vercel
+apps
+docs
+.vscode
+.cursor
+.claude
+.agents

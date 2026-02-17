@@ -18,10 +18,10 @@
 
 ## Installation
 
-Since this fork is not yet published to npm, install directly from GitHub:
+Install directly from GitHub:
 
 ```bash
-npm install github:maaraquel08/design-fork
+npm install uifork-vue@github:maaraquel08/design-fork
 ```
 
 Or add to your `package.json`:
@@ -33,6 +33,8 @@ Or add to your `package.json`:
   }
 }
 ```
+
+The package builds automatically on install via the `prepare` script.
 
 ---
 
@@ -248,10 +250,10 @@ npx uifork-vue watch --port 3002
 
 ```vue
 <!-- Component -->
-<UIFork port={3002} />
+<UIFork :port="3002" />
 ```
 
-### Lazy loading (Vue only)
+### Lazy loading
 
 ```bash
 npx uifork-vue watch --lazy

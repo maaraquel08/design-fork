@@ -1,24 +1,38 @@
 {
-  "name": "uifork",
+  "name": "uifork-vue",
   "version": "0.0.4-beta.1",
   "private": true,
-  "description": "Monorepo for uifork - CLI tool and React components for managing UI component versions",
+  "description": "A Vue 3 fork of uifork - dev tool for exploring UI ideas directly inside your Vue app",
   "keywords": [
-    "ab-testing",
+    "vue",
+    "vue3",
     "cli",
     "components",
-    "monorepo",
-    "react",
-    "switcher",
     "ui",
-    "versioning"
+    "versioning",
+    "prototyping",
+    "ab-testing"
   ],
   "license": "MIT",
+  "main": "./packages/uifork-vue/dist/index.js",
+  "module": "./packages/uifork-vue/dist/index.mjs",
+  "types": "./packages/uifork-vue/dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./packages/uifork-vue/dist/index.d.ts",
+      "import": "./packages/uifork-vue/dist/index.mjs",
+      "require": "./packages/uifork-vue/dist/index.js"
+    }
+  },
+  "bin": {
+    "uifork-vue": "./packages/uifork-vue/cli.js"
+  },
   "workspaces": [
     "packages/*",
     "apps/*"
   ],
   "scripts": {
+    "prepare": "cd packages/uifork-vue && npm run build",
     "build": "turbo run build",
     "dev": "turbo run dev",
     "dev:all": "turbo run dev",
