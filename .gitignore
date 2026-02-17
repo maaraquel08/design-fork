@@ -5,6 +5,9 @@ dist
 **/dist
 docs
 
+# Include uifork-vue dist (needed for GitHub installs)
+!packages/uifork-vue/dist
+
 # Turborepo
 .turbo
 .vercel

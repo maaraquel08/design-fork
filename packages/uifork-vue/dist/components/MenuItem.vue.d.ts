@@ -1,0 +1,14 @@
+import { Component } from 'vue';
+type __VLS_Props = {
+    icon: Component;
+    label: string;
+    variant?: 'default' | 'delete';
+    stopPropagation?: boolean;
+};
+declare const _default: import('vue').DefineComponent<__VLS_Props, {}, {}, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
+    click: (e: MouseEvent) => any;
+}, string, import('vue').PublicProps, Readonly<__VLS_Props> & Readonly<{
+    onClick?: ((e: MouseEvent) => any) | undefined;
+}>, {}, {}, {}, {}, string, import('vue').ComponentProvideOptions, false, {}, HTMLButtonElement>;
+export default _default;
+//# sourceMappingURL=MenuItem.vue.d.ts.map
