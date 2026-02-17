@@ -63,6 +63,16 @@
     "fmt": "oxfmt",
     "fmt:check": "oxfmt --check"
   },
+  "dependencies": {
+    "@floating-ui/dom": "^1.6.0",
+    "chokidar": "^3.5.3",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "ws": "^8.14.2"
+  },
+  "peerDependencies": {
+    "vue": ">=3.3.0"
+  },
   "devDependencies": {
     "oxfmt": "^0.27.0",
     "oxlint": "^1.42.0",
