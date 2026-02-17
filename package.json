@@ -14,6 +14,16 @@
     "ab-testing"
   ],
   "license": "MIT",
+  "files": [
+    "packages/uifork-vue/dist",
+    "packages/uifork-vue/cli.js",
+    "packages/uifork-vue/lib",
+    "packages/uifork-vue/src",
+    "packages/uifork-vue/package.json",
+    "packages/uifork-vue/README.md",
+    "packages/uifork-vue/vite.config.ts",
+    "packages/uifork-vue/tsconfig.json"
+  ],
   "main": "./packages/uifork-vue/dist/index.js",
   "module": "./packages/uifork-vue/dist/index.mjs",
   "types": "./packages/uifork-vue/dist/index.d.ts",
@@ -60,6 +70,7 @@
   },
   "packageManager": "npm@10.9.0",
   "dependencies": {
-    "uifork": "^0.0.10"
+    "uifork": "^0.0.10",
+    "uifork-vue": "^0.0.1"
   }
 }
